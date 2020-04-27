@@ -1,6 +1,7 @@
 .venv/
 .vscode/
 
-correction/
-fichiers/
+grading/
+master_files/
+unzipped/
 zipped/
