@@ -1,197 +1,228 @@
 #!/usr/bin/env python3
 
+import sys
 import os
 import glob
 from pathlib import Path
-from shutil import copyfile, copytree, rmtree
+import shutil
 import subprocess
 import zipfile
-import glob
 import mosspy
 
-ZIPPED_FILES_FOLDER = 'zipped'
-UNZIPPED_FILES_FOLDER = 'unzipped'
-GRADING_OUTPUT_FOLDER = 'grading'
-MASTER_FILES_FOLDER = 'master_files'
-GRADING_WORKING_SUBFOLDER = os.path.join(GRADING_OUTPUT_FOLDER, 'working')
-GRADING_COMPILATION_FAILED_SUBFOLDER = os.path.join(GRADING_OUTPUT_FOLDER, 'compilation_failed')
-GRADING_CRASHED_SUBFOLDER = os.path.join(GRADING_OUTPUT_FOLDER, 'crashed')
-MOSS_REPORT_FOLDER = 'moss_report'
+# Folder configuration
+ZIPPED_FILES_FOLDER = Path('zipped') # Note: contents should match Moodle batch download format
+UNZIPPED_FILES_FOLDER = Path('unzipped')
+MASTER_FILES_FOLDER = Path('master_files')
+GRADING_OUTPUT_FOLDER = Path('grading')
+GRADING_WORKING_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'working'
+GRADING_COMPILATION_FAILED_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'compilation_failed'
+GRADING_CRASHED_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'crashed'
+MOSS_REPORT_FOLDER = Path('moss_report')
 
-simon_gauvin_id = 297240028
-moss = mosspy.Moss(simon_gauvin_id, 'python')
+# Grading configuration
+POINTS_TO_REMOVE_FILENAME = 'points_to_remove.txt'
 
-POINTS_FOR_WARNINGS = '-1.5'
-POINTS_FOR_NOT_COMPILING = '-4'
-POINTS_FOR_CRASHING = '-2'
-POINTS_FOR_LEAKS = '-2'
+# Grading settings (graded on 20)
+PENALTY_FOR_WARNINGS = -1.5
+PENALTY_FOR_COMPILATION_FAILURE = -3
+PENALTY_FOR_CRASH = -2
+PENALTY_FOR_LEAKS = -2
 
-def unzip_files():
-    # Only unzip if unzipped dir doesnt exists
-    if os.path.isdir(UNZIPPED_FILES_FOLDER) == False:
-        # unzip all files to unzipped folder
-        print('Unzipping files')
-        os.mkdir(UNZIPPED_FILES_FOLDER)
-        # zipped_files = [f for f in listdir(zipped_files_dir) if isfile(join(zipped_files_dir, f))]
-        for zipped_file in Path(ZIPPED_FILES_FOLDER).rglob('*.zip'):
-            binome = str(zipped_file).split('.')[0].split('/')[1]
-            zip_name = str(zipped_file).split('.')[0].split('/')[-1]
-            zip_path = os.path.join(zipped_file)
-            unzipped_folder = UNZIPPED_FILES_FOLDER + '/' + binome + ':_' + zip_name
-            os.mkdir(unzipped_folder)
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(unzipped_folder)
-
-        subdirs = [x[0] for x in os.walk('.')]
-        for dir in subdirs:
-            if '__MACOSX' in dir.split('/')[-1]:
-                rmtree(dir)
-
-    else:
-        print('Files already unzipped.')
-
-    print('\n')
+# MOSS configuration
+MOSS_USER_ID = 297240028
 
 
-def grade_files():
-    if os.path.isdir(GRADING_OUTPUT_FOLDER) == False:
-        print('Correction des programmes des étudiants\n')
-        os.mkdir(GRADING_OUTPUT_FOLDER)
-        os.mkdir(GRADING_WORKING_SUBFOLDER)
-        dirs = os.listdir(UNZIPPED_FILES_FOLDER)
-        num = 0
-        for folder_name in dirs:
-            num += 1
-            # Organize files and copy main.cpp and makefile
-            path_to_dir = GRADING_WORKING_SUBFOLDER + '/' + folder_name
-            os.mkdir(path_to_dir)
-            os.mkdir(path_to_dir + '/src')
-            os.mkdir(path_to_dir + '/include')
+def unzip_files(force_refresh):
+    if UNZIPPED_FILES_FOLDER.is_dir():
+        print('Unzipping already complete', end='')
 
-            with open(path_to_dir + '/points_to_rm.txt', 'w') as file:
+        if force_refresh:
+            print(' - Forcing refresh anyway')
+            shutil.rmtree(UNZIPPED_FILES_FOLDER)
+        else:
+            print()
+            return
 
-                # for filepath glob.glob(unzipped_files_dir + '/' + folder_name + '/*.cpp'):
+    print('Unzipping files')
 
-                for filepath in Path(UNZIPPED_FILES_FOLDER + '/' + folder_name).rglob('*.cpp'):
-                    if filepath.is_file() == False:
-                        continue
-                    filename = str(filepath).split('/')[-1]
-                    if filename in ['Makefile']:
-                        continue
-                    copyfile(filepath, path_to_dir + '/src/' + filename)
+    # Create folder for unzipped files
+    if UNZIPPED_FILES_FOLDER.is_dir():
+        shutil.rmtree(UNZIPPED_FILES_FOLDER)
+    UNZIPPED_FILES_FOLDER.mkdir()
 
-                for filepath in Path(UNZIPPED_FILES_FOLDER + '/' + folder_name).rglob('*.h'):
-                    if filepath.is_file() == False:
-                        continue
-                    filename = str(filepath).split('/')[-1]
-                    if filename == 'typesafe_enum.h':
-                        continue
-                    copyfile(filepath, path_to_dir + '/include/' + filename)
+    # Initialize generator for all archives
+    archives = (archive for archive in ZIPPED_FILES_FOLDER.glob('*/*') if archive.is_file())
 
-                copyfile(MASTER_FILES_FOLDER + '/Makefile', path_to_dir + '/Makefile')
-                # copyfile(MASTER_FILES_FOLDER + '/main.cpp', path_to_dir + '/src/main.cpp')
-                # copyfile(MASTER_FILES_FOLDER + '/typesafe_enum.h', path_to_dir + '/include/typesafe_enum.h')
-                # TODO: Add files to overwrite here
+    # Extract all archives
+    for archive in archives:
+        # Create destination folder
+        destination_folder_filename = archive.parent.name + '_-_' + archive.stem
+        destination_folder = UNZIPPED_FILES_FOLDER / destination_folder_filename
+        destination_folder.mkdir()
 
-                # Compile program
-                proc = subprocess.Popen(['make', '-j', '-C', path_to_dir],
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
+        # Output warning if archive format is unsupported
+        if archive.suffix != '.zip':
+            print(f'\tWarning: Skipping invalid archive format ({archive.suffix}) for folder \'{archive.parent.name}\'')
+            continue
 
-                stdout, stderr = proc.communicate()
-
-                with open(path_to_dir + '/stdout.txt', 'w') as stdoutfile:
-                    stdoutfile.write(stdout.decode('utf-8'))
-
-                with open(path_to_dir + '/stderr.txt', 'w') as stderrfile:
-                    stderrfile.write(stderr.decode('utf-8'))
-
-                compiled = proc.returncode == 0
-
-                output = str(num) + '/' + str(len(dirs)) + ' '
-
-                if compiled == True:
-                    warnings = False
-                    if stderr:
-                        warnings = True
-                        file.write(POINTS_FOR_WARNINGS + ': Warnings\n')
-                    output += folder_name + \
-                        ' | Compiled: True | Warnings: ' + str(warnings)
-                else:
-                    print(output + folder_name + ' | Compiled: False')
-                    file.write(POINTS_FOR_NOT_COMPILING + ': Ne compile pas\n')
-                    file.close()
-                    copytree(path_to_dir, GRADING_COMPILATION_FAILED_SUBFOLDER +
-                             '/' + folder_name)
-                    rmtree(path_to_dir)
+        # Unzip flattened file hierarchy
+        with zipfile.ZipFile(archive, 'r') as zipped_file:
+            for file_info in zipped_file.infolist():
+                if file_info.is_dir():
+                    continue
+                
+                is_file_macos_metadata = '__MACOSX' in file_info.filename
+                if is_file_macos_metadata:
                     continue
 
-                executable_folder = path_to_dir + '/bin/linux/debug'
+                file_info.filename = os.path.basename(file_info.filename)
+                zipped_file.extract(file_info, destination_folder)
+    print()
 
-                # Copy text files TODO: Modify
-                # copyfile(MASTER_FILES_FOLDER + '/restrictionsPays.txt', executable_folder + '/restrictionsPays.txt')
-                # copyfile(MASTER_FILES_FOLDER + '/films.txt', executable_folder + '/films.txt')
-                # copyfile(MASTER_FILES_FOLDER + '/auteurs.txt', executable_folder + '/auteurs.txt')
 
-                # Run program
+def grade_programs(force_refresh):
+    if GRADING_OUTPUT_FOLDER.is_dir():
+        print('Grading already complete', end='')
 
-                # Check if program crash
-                proc = subprocess.Popen(['make', 'run', '-C', path_to_dir],
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
+        if force_refresh:
+            print(' - Forcing refresh anyway')
+            shutil.rmtree(GRADING_OUTPUT_FOLDER)
+        else:
+            print()
+            return
 
-                stdout, stderr = proc.communicate()
-                crashed = proc.returncode != 0
+    print('Grading student programs')
+    
+    # Create folder for student programs
+    GRADING_OUTPUT_FOLDER.mkdir()
+    GRADING_WORKING_SUBFOLDER.mkdir()
+    GRADING_COMPILATION_FAILED_SUBFOLDER.mkdir()
+    GRADING_CRASHED_SUBFOLDER.mkdir()
 
-                with open(path_to_dir + '/outputprog.txt', 'w') as outputprog:
-                    outputprog.write(stdout.decode('utf-8'))
+    unzipped_folders = list(UNZIPPED_FILES_FOLDER.iterdir())
+    for index, current_unzipped_folder in enumerate(unzipped_folders, 1):
+        print(f'\t{index}/{len(unzipped_folders)} {current_unzipped_folder.name}', end='')
 
-                if crashed == True:
-                    print(output + ' | Crashed: True')
-                    file.write(POINTS_FOR_CRASHING + ': Programme plante\n')
-                    file.close()
-                    copytree(path_to_dir, GRADING_CRASHED_SUBFOLDER + '/' + folder_name)
-                    rmtree(path_to_dir)
-                    continue
+        current_grading_folder = prepare_grading_folder(current_unzipped_folder)
 
-                output += ' | crashed: False'
+        points_to_remove = []
 
-                # Parse stdout for grade # TODO: Modify
-                # programOutput = str(stdout)
-                # startStr = 'TOTAL: '
-                # endStr = '/8'
-                # start = programOutput.find(startStr) + len(startStr) - 1
-                # end = programOutput.find(endStr)
-                # grade = programOutput[start : end]
-                # grade = float(grade.strip())
-                # output += ' | Tests :' + str(grade) + '/8'
+        # Compile program
+        process = subprocess.run(['make', '-j'], capture_output=True, cwd=current_grading_folder)
 
-                points_to_remove = 8.0  # - grade
+        with open(current_grading_folder / 'compilation_stdout.txt', 'wb') as stdout_file, \
+             open(current_grading_folder / 'compilation_stderr.txt', 'wb') as stderr_file:
+            stdout_file.write(process.stdout)
+            stderr_file.write(process.stderr)
 
-                if points_to_remove != 0:
-                    file.write('-' + str(points_to_remove) +
-                               ': Certains tests échouent')
+        program_compiled = process.returncode == 0
+        if program_compiled == True:
+            program_has_warnings = len(process.stderr) > 0
+            if program_has_warnings:
+                points_to_remove.append(f'{PENALTY_FOR_WARNINGS}: Warnings')
+            print(f' | Compiled: True | Warnings: {program_has_warnings}', end='')
+        else:
+            print(' | Compiled: False')
+            points_to_remove.append(f'{PENALTY_FOR_COMPILATION_FAILURE}: Ne compile pas')
+            write_points_to_remove(current_grading_folder, points_to_remove)
+            current_grading_folder.replace(GRADING_COMPILATION_FAILED_SUBFOLDER / current_grading_folder.name)
+            continue
 
-                # Check for memory leaks TODO: Install valgrind
-                # proc = subprocess.Popen(['valgrind', '--tool=memcheck', '--leak-check=yes', '--error-exitcode=1',executable_folder + '/project'],
-                #     stdout=subprocess.PIPE,
-                #     stderr=subprocess.PIPE)
+        # Run program
 
-                # stdout, stderr = proc.communicate()
+        # Copy text files
+        executable_folder = current_grading_folder / 'bin/linux/debug'
+        for file in MASTER_FILES_FOLDER.glob('*.txt'):
+            shutil.copy(file, executable_folder)
 
-                # leaks_found = proc.returncode != 0
-                # if leaks_found:
-                #     file.write(POINTS_FOR_LEAKS + ': Fuite de mémoire')
+        # Check if program crashes
+        process = subprocess.run(['make', 'run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder)
 
-                # output += ' | Leaks: ' + str(leaks_found)
+        crashed = process.returncode != 0
 
-                print(output)
+        with open(current_grading_folder / 'program_output.txt', 'wb') as outputprog:
+            outputprog.write(process.stdout)
 
-    else:
-        print('Correction déjà faite.\n')
+        if crashed == True:
+            print(' | Crashed: True')
+            points_to_remove.append(f'{PENALTY_FOR_CRASH}: Programme plante\n')
+            write_points_to_remove(current_grading_folder, points_to_remove)
+            current_grading_folder.replace(GRADING_CRASHED_SUBFOLDER / current_grading_folder.name)
+            continue
+
+        print(' | Crashed: False')
+
+        # Parse stdout for grade # TODO: Modify
+        # programOutput = str(stdout)
+        # startStr = 'TOTAL: '
+        # endStr = '/8'
+        # start = programOutput.find(startStr) + len(startStr) - 1
+        # end = programOutput.find(endStr)
+        # grade = programOutput[start : end]
+        # grade = float(grade.strip())
+        # output += ' | Tests :' + str(grade) + '/8'
+
+        points_to_remove_for_tests = 8.0  # - grade
+
+        if points_to_remove != 0:
+            points_to_remove.append(f'-{points_to_remove_for_tests}: Certains tests échouent')
+
+        # Check for memory leaks TODO: Install valgrind
+        # proc = subprocess.Popen(['valgrind', '--leak-check=yes', '--error-exitcode=1', executable_folder + '/project'],
+        #     stdout=subprocess.PIPE,
+        #     stderr=subprocess.PIPE)
+
+        # stdout, stderr = proc.communicate()
+
+        # leaks_found = proc.returncode != 0
+        # if leaks_found:
+        #     file.write(PENALTY_FOR_LEAKS + ': Fuite de mémoire')
+
+        # output += ' | Leaks: ' + str(leaks_found)
+
+        write_points_to_remove(current_grading_folder, points_to_remove)
+
+
+
+def prepare_grading_folder(current_unzipped_folder):
+    # Create folder structure
+    current_grading_folder = GRADING_WORKING_SUBFOLDER / current_unzipped_folder.name
+    current_grading_folder.mkdir()
+    os.mkdir(current_grading_folder / 'src')
+    os.mkdir(current_grading_folder / 'include')
+
+    # Copy student files
+    for file in current_unzipped_folder.glob('*.cpp'):
+        if not file.is_file():
+            continue
+        shutil.copy(file, current_grading_folder / 'src')
+    for file in current_unzipped_folder.glob('*.h'):
+        if not file.is_file():
+            continue
+        shutil.copy(file, current_grading_folder / 'include')
+
+    # Copy master files (and potentially overwrite student files)
+    shutil.copyfile(MASTER_FILES_FOLDER / 'Makefile', current_grading_folder / 'Makefile')
+    for file in MASTER_FILES_FOLDER.glob('*.cpp'):
+        shutil.copy(file, current_grading_folder / 'src')
+    for file in MASTER_FILES_FOLDER.glob('*.h'):
+        shutil.copy(file, current_grading_folder / 'include')
+    
+    return current_grading_folder
+
+
+def compile_program():
+    pass
+
+
+def write_points_to_remove(current_grading_folder, points_to_remove):
+    with open(current_grading_folder / 'points_to_rm.txt', 'w') as file:
+        file.writelines(map(lambda x: x + '\n', points_to_remove))
 
 
 def upload_moss():
+    moss = mosspy.Moss(MOSS_USER_ID, 'python')
+
     # Plagiat:
     if not os.path.isdir(MOSS_REPORT_FOLDER):
         os.mkdir(MOSS_REPORT_FOLDER)
@@ -224,10 +255,14 @@ def upload_moss():
 
 
 def main():
-    unzip_files()
-    grade_files()
+    force_refresh = 'force' in sys.argv
+
+    unzip_files(force_refresh)
+    grade_programs(force_refresh)
     # upload_moss()
 
 
 if __name__ == '__main__':
     main()
+
+# Made by Simon Gauvin and Misha Krieger-Raynauld 
