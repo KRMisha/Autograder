@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-import sys
-import os
 import glob
-from pathlib import Path
+import os
+import re
 import shutil
 import subprocess
+import sys
 import zipfile
 import mosspy
+from pathlib import Path
 
 # Folder configuration
 ZIPPED_FILES_FOLDER = Path('zipped') # Note: contents should match Moodle batch download format
@@ -19,14 +20,14 @@ GRADING_COMPILATION_FAILED_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'compilation_fail
 GRADING_CRASHED_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'crashed'
 MOSS_REPORT_FOLDER = Path('moss_report')
 
-# Grading configuration
-POINTS_TO_REMOVE_FILENAME = 'points_to_remove.txt'
-
 # Grading settings (graded on 20)
+POINTS_TO_REMOVE_FILENAME = 'points_to_rm.txt'
 PENALTY_FOR_WARNINGS = -1.5
 PENALTY_FOR_COMPILATION_FAILURE = -3
 PENALTY_FOR_CRASH = -2
 PENALTY_FOR_LEAKS = -2
+POINTS_FOR_TESTS = 6
+TESTS_RESULT_REGEX = r'Total pour tous les tests: (.*)\/6'
 
 # MOSS configuration
 MOSS_USER_ID = 297240028
@@ -70,7 +71,7 @@ def unzip_files(force_refresh):
             for file_info in zipped_file.infolist():
                 if file_info.is_dir():
                     continue
-                
+
                 is_file_macos_metadata = '__MACOSX' in file_info.filename
                 if is_file_macos_metadata:
                     continue
@@ -92,7 +93,7 @@ def grade_programs(force_refresh):
             return
 
     print('Grading student programs')
-    
+
     # Create folder for student programs
     GRADING_OUTPUT_FOLDER.mkdir()
     GRADING_WORKING_SUBFOLDER.mkdir()
@@ -101,71 +102,15 @@ def grade_programs(force_refresh):
 
     unzipped_folders = list(UNZIPPED_FILES_FOLDER.iterdir())
     for index, current_unzipped_folder in enumerate(unzipped_folders, 1):
-        print(f'\t{index}/{len(unzipped_folders)} {current_unzipped_folder.name}', end='')
+        print(f'\t{index}/{len(unzipped_folders)}: {current_unzipped_folder.name}', end='')
 
         current_grading_folder = prepare_grading_folder(current_unzipped_folder)
 
-        points_to_remove = []
-
-        # Compile program
-        process = subprocess.run(['make', '-j'], capture_output=True, cwd=current_grading_folder)
-
-        with open(current_grading_folder / 'compilation_stdout.txt', 'wb') as stdout_file, \
-             open(current_grading_folder / 'compilation_stderr.txt', 'wb') as stderr_file:
-            stdout_file.write(process.stdout)
-            stderr_file.write(process.stderr)
-
-        program_compiled = process.returncode == 0
-        if program_compiled == True:
-            program_has_warnings = len(process.stderr) > 0
-            if program_has_warnings:
-                points_to_remove.append(f'{PENALTY_FOR_WARNINGS}: Warnings')
-            print(f' | Compiled: True | Warnings: {program_has_warnings}', end='')
-        else:
-            print(' | Compiled: False')
-            points_to_remove.append(f'{PENALTY_FOR_COMPILATION_FAILURE}: Ne compile pas')
-            write_points_to_remove(current_grading_folder, points_to_remove)
-            current_grading_folder.replace(GRADING_COMPILATION_FAILED_SUBFOLDER / current_grading_folder.name)
+        if not compile_program(current_grading_folder):
             continue
 
-        # Run program
-
-        # Copy text files
-        executable_folder = current_grading_folder / 'bin/linux/debug'
-        for file in MASTER_FILES_FOLDER.glob('*.txt'):
-            shutil.copy(file, executable_folder)
-
-        # Check if program crashes
-        process = subprocess.run(['make', 'run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder)
-
-        crashed = process.returncode != 0
-
-        with open(current_grading_folder / 'program_output.txt', 'wb') as outputprog:
-            outputprog.write(process.stdout)
-
-        if crashed == True:
-            print(' | Crashed: True')
-            points_to_remove.append(f'{PENALTY_FOR_CRASH}: Programme plante\n')
-            write_points_to_remove(current_grading_folder, points_to_remove)
-            current_grading_folder.replace(GRADING_CRASHED_SUBFOLDER / current_grading_folder.name)
+        if not run_program(current_grading_folder):
             continue
-
-        print(' | Crashed: False')
-
-        # Parse stdout for grade # TODO: Modify
-        # programOutput = str(stdout)
-        # startStr = 'TOTAL: '
-        # endStr = '/8'
-        # start = programOutput.find(startStr) + len(startStr) - 1
-        # end = programOutput.find(endStr)
-        # grade = programOutput[start : end]
-        # grade = float(grade.strip())
-        # output += ' | Tests :' + str(grade) + '/8'
-
-        points_to_remove_for_tests = 8.0  # - grade
-
-        if points_to_remove != 0:
-            points_to_remove.append(f'-{points_to_remove_for_tests}: Certains tests échouent')
 
         # Check for memory leaks TODO: Install valgrind
         # proc = subprocess.Popen(['valgrind', '--leak-check=yes', '--error-exitcode=1', executable_folder + '/project'],
@@ -180,7 +125,7 @@ def grade_programs(force_refresh):
 
         # output += ' | Leaks: ' + str(leaks_found)
 
-        write_points_to_remove(current_grading_folder, points_to_remove)
+        print()
 
 
 
@@ -190,6 +135,7 @@ def prepare_grading_folder(current_unzipped_folder):
     current_grading_folder.mkdir()
     os.mkdir(current_grading_folder / 'src')
     os.mkdir(current_grading_folder / 'include')
+    open(current_grading_folder / POINTS_TO_REMOVE_FILENAME, 'a').close()
 
     # Copy student files
     for file in current_unzipped_folder.glob('*.cpp'):
@@ -207,17 +153,81 @@ def prepare_grading_folder(current_unzipped_folder):
         shutil.copy(file, current_grading_folder / 'src')
     for file in MASTER_FILES_FOLDER.glob('*.h'):
         shutil.copy(file, current_grading_folder / 'include')
-    
+
     return current_grading_folder
 
 
-def compile_program():
-    pass
+def compile_program(current_grading_folder):
+    # Compile with Makefile and save output
+    process = subprocess.run(['make', '-j'], capture_output=True, cwd=current_grading_folder)
+    with open(current_grading_folder / 'compilation_stdout.txt', 'wb') as file:
+        file.write(process.stdout)
+    with open(current_grading_folder / 'compilation_stderr.txt', 'wb') as file:
+        file.write(process.stderr)
+
+    # Check for successful compilation
+    compilation_failed = process.returncode != 0
+    print(f' | Compiled: {not compilation_failed}', end='')
+
+    if compilation_failed:
+        print()
+        remove_points(current_grading_folder, PENALTY_FOR_COMPILATION_FAILURE, 'Ne compile pas')
+        current_grading_folder.replace(GRADING_COMPILATION_FAILED_SUBFOLDER / current_grading_folder.name)
+        return False
+
+    # Check for warnings
+    warnings_emitted = len(process.stderr) > 0
+    if warnings_emitted:
+        remove_points(current_grading_folder, PENALTY_FOR_WARNINGS, 'Warnings')
+    print(f' | Warnings: {warnings_emitted}', end='')
+    return True
 
 
-def write_points_to_remove(current_grading_folder, points_to_remove):
-    with open(current_grading_folder / 'points_to_rm.txt', 'w') as file:
-        file.writelines(map(lambda x: x + '\n', points_to_remove))
+def run_program(current_grading_folder):
+    # Parse executable folder from Makefile printvars target
+    process = subprocess.run(['make', 'printvars'], capture_output=True, cwd=current_grading_folder)
+    match = re.search(r'BIN_DIR: (.*)', process.stdout.decode('utf-8'))
+    executable_folder = current_grading_folder / match.group(1)
+
+    # Copy master text files
+    for file in MASTER_FILES_FOLDER.glob('*.txt'):
+        shutil.copy(file, executable_folder)
+
+    # Run program with Makefile and save output
+    process = subprocess.run(['make', 'run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder)
+    with open(current_grading_folder / 'program_output.txt', 'wb') as file:
+        file.write(process.stdout)
+
+    # Check if program crashed
+    program_crashed = process.returncode != 0
+    print(f' | Crashed: {program_crashed}', end='')
+
+    if program_crashed:
+        print()
+        remove_points(current_grading_folder, PENALTY_FOR_CRASH, 'Programme crash')
+        current_grading_folder.replace(GRADING_CRASHED_SUBFOLDER / current_grading_folder.name)
+        return False
+
+    # Parse automated test results
+    match = re.search(TESTS_RESULT_REGEX, process.stdout.decode('utf-8'))
+    tests_result = float(match.group(1)) if match else '?'
+    
+    if tests_result != '?':
+        lost_test_points = - (POINTS_FOR_TESTS - tests_result)
+        should_remove_points = lost_test_points < 0
+    else:
+        lost_test_points = '-?'
+        should_remove_points = True
+
+    if should_remove_points:
+        remove_points(current_grading_folder, lost_test_points, f'Échec de certains tests ({tests_result}/{POINTS_FOR_TESTS})')
+    print(f' | Tests: {tests_result}/{POINTS_FOR_TESTS}', end='')
+    return True
+
+
+def remove_points(current_grading_folder, points_to_remove, reason):
+    with open(current_grading_folder / POINTS_TO_REMOVE_FILENAME, 'a') as file:
+        file.write(f'{points_to_remove}: {reason}\n')
 
 
 def upload_moss():
@@ -265,4 +275,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-# Made by Simon Gauvin and Misha Krieger-Raynauld 
+# Made by Simon Gauvin and Misha Krieger-Raynauld
