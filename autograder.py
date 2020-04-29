@@ -29,7 +29,7 @@ PENALTY_FOR_LEAKS = -2
 POINTS_FOR_TESTS = 6
 TESTS_RESULT_REGEX = r'Total pour tous les tests: (.*)\/6'
 
-# MOSS configuration
+# Moss configuration
 MOSS_USER_ID = 297240028
 
 
@@ -47,8 +47,6 @@ def unzip_files(force_refresh):
     print('Unzipping files')
 
     # Create folder for unzipped files
-    if UNZIPPED_FILES_FOLDER.is_dir():
-        shutil.rmtree(UNZIPPED_FILES_FOLDER)
     UNZIPPED_FILES_FOLDER.mkdir()
 
     # Initialize generator for all archives
@@ -112,49 +110,37 @@ def grade_programs(force_refresh):
         if not run_program(current_grading_folder):
             continue
 
-        # Check for memory leaks TODO: Install valgrind
-        # proc = subprocess.Popen(['valgrind', '--leak-check=yes', '--error-exitcode=1', executable_folder + '/project'],
-        #     stdout=subprocess.PIPE,
-        #     stderr=subprocess.PIPE)
-
-        # stdout, stderr = proc.communicate()
-
-        # leaks_found = proc.returncode != 0
-        # if leaks_found:
-        #     file.write(PENALTY_FOR_LEAKS + ': Fuite de mémoire')
-
-        # output += ' | Leaks: ' + str(leaks_found)
+        check_program_for_leaks(current_grading_folder)
 
         print()
 
 
-
-def prepare_grading_folder(current_unzipped_folder):
+def prepare_grading_folder(unzipped_folder):
     # Create folder structure
-    current_grading_folder = GRADING_WORKING_SUBFOLDER / current_unzipped_folder.name
-    current_grading_folder.mkdir()
-    os.mkdir(current_grading_folder / 'src')
-    os.mkdir(current_grading_folder / 'include')
-    open(current_grading_folder / POINTS_TO_REMOVE_FILENAME, 'a').close()
+    grading_folder = GRADING_WORKING_SUBFOLDER / unzipped_folder.name
+    grading_folder.mkdir()
+    os.mkdir(grading_folder / 'src')
+    os.mkdir(grading_folder / 'include')
+    open(grading_folder / POINTS_TO_REMOVE_FILENAME, 'a').close()
 
     # Copy student files
-    for file in current_unzipped_folder.glob('*.cpp'):
+    for file in unzipped_folder.glob('*.cpp'):
         if not file.is_file():
             continue
-        shutil.copy(file, current_grading_folder / 'src')
-    for file in current_unzipped_folder.glob('*.h'):
+        shutil.copy(file, grading_folder / 'src')
+    for file in unzipped_folder.glob('*.h'):
         if not file.is_file():
             continue
-        shutil.copy(file, current_grading_folder / 'include')
+        shutil.copy(file, grading_folder / 'include')
 
     # Copy master files (and potentially overwrite student files)
-    shutil.copyfile(MASTER_FILES_FOLDER / 'Makefile', current_grading_folder / 'Makefile')
+    shutil.copyfile(MASTER_FILES_FOLDER / 'Makefile', grading_folder / 'Makefile')
     for file in MASTER_FILES_FOLDER.glob('*.cpp'):
-        shutil.copy(file, current_grading_folder / 'src')
+        shutil.copy(file, grading_folder / 'src')
     for file in MASTER_FILES_FOLDER.glob('*.h'):
-        shutil.copy(file, current_grading_folder / 'include')
+        shutil.copy(file, grading_folder / 'include')
 
-    return current_grading_folder
+    return grading_folder
 
 
 def compile_program(current_grading_folder):
@@ -184,14 +170,9 @@ def compile_program(current_grading_folder):
 
 
 def run_program(current_grading_folder):
-    # Parse executable folder from Makefile printvars target
-    process = subprocess.run(['make', 'printvars'], capture_output=True, cwd=current_grading_folder)
-    match = re.search(r'BIN_DIR: (.*)', process.stdout.decode('utf-8'))
-    executable_folder = current_grading_folder / match.group(1)
-
     # Copy master text files
     for file in MASTER_FILES_FOLDER.glob('*.txt'):
-        shutil.copy(file, executable_folder)
+        shutil.copy(file, get_executable_path(current_grading_folder))
 
     # Run program with Makefile and save output
     process = subprocess.run(['make', 'run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder)
@@ -211,7 +192,7 @@ def run_program(current_grading_folder):
     # Parse automated test results
     match = re.search(TESTS_RESULT_REGEX, process.stdout.decode('utf-8'))
     tests_result = float(match.group(1)) if match else '?'
-    
+
     if tests_result != '?':
         lost_test_points = - (POINTS_FOR_TESTS - tests_result)
         should_remove_points = lost_test_points < 0
@@ -225,51 +206,99 @@ def run_program(current_grading_folder):
     return True
 
 
+def check_program_for_leaks(current_grading_folder):
+    # Run valgrind against program and save output
+    try:
+        process = subprocess.run(['valgrind', '--leak-check=yes', '--error-exitcode=1', './project'],
+                                 capture_output=True, cwd=get_executable_path(current_grading_folder), timeout=60)
+    except subprocess.TimeoutExpired:
+        # Timeout when Valgrind takes too long (give up on detecting leaks)
+        print(f' | Leaks: Timed out', end='')
+        return
+
+    with open(current_grading_folder / 'valgrind_stderr.txt', 'wb') as file:
+        file.write(process.stderr)
+
+    # Check for memory leaks
+    leaks_found = process.returncode == 1
+    print(f' | Leaks: {leaks_found}', end='')
+
+    if leaks_found:
+        remove_points(current_grading_folder, PENALTY_FOR_LEAKS, 'Fuite de mémoire')
+
+
 def remove_points(current_grading_folder, points_to_remove, reason):
     with open(current_grading_folder / POINTS_TO_REMOVE_FILENAME, 'a') as file:
         file.write(f'{points_to_remove}: {reason}\n')
 
 
-def upload_moss():
+def get_executable_path(current_grading_folder):
+    # Parse executable folder from Makefile printvars target
+    process = subprocess.run(['make', 'printvars'], capture_output=True, cwd=current_grading_folder)
+    match = re.search(r'BIN_DIR: (.*)', process.stdout.decode('utf-8'))
+    return current_grading_folder / match.group(1)
+
+
+def generate_moss_report(force_refresh):
+    if MOSS_REPORT_FOLDER.is_dir():
+        print('Moss report already complete', end='')
+
+        if force_refresh:
+            print(' - Forcing refresh anyway')
+            shutil.rmtree(MOSS_REPORT_FOLDER)
+        else:
+            print()
+            return
+
+    print('Generating Moss report')
+
     moss = mosspy.Moss(MOSS_USER_ID, 'python')
 
-    # Plagiat:
-    if not os.path.isdir(MOSS_REPORT_FOLDER):
-        os.mkdir(MOSS_REPORT_FOLDER)
-        concat_files_dir = MOSS_REPORT_FOLDER + '/concat_files'
-        os.mkdir(concat_files_dir)
-        print('Gathering files for MOSS')
+    # Create folder for Moss report
+    MOSS_REPORT_FOLDER.mkdir()
+    concatenated_files_folder = MOSS_REPORT_FOLDER / 'concatenated_files'
+    concatenated_files_folder.mkdir()
 
-        for folder_name in os.listdir(UNZIPPED_FILES_FOLDER):
-            filename = concat_files_dir + '/' + folder_name + '.txt'
-            with open(filename, 'w') as concat_file:
-                print(filename)
-                for filepath in Path(UNZIPPED_FILES_FOLDER + '/' + folder_name).rglob('*.cpp'):
-                    if os.path.isfile(filepath) == False:
-                        continue
-                    with open(filepath, errors='replace') as infile:
-                        for line in infile:
-                            # line = line.decode('utf-8','ignore').encode('utf-8')
-                            concat_file.write(line)
-            if os.path.getsize(filename) != 0:  # if file is not 0 byte
-                moss.addFile(filename)
+    print('\tConcatenating source files')
+    for unzipped_folder in UNZIPPED_FILES_FOLDER.iterdir():
+        concatenated_file_path = concatenated_files_folder / (unzipped_folder.name + '.txt')
 
-        print('sending files to MOSS')
-        url = moss.send()
-        print('Plagiat url: ' + url)
-        moss.saveWebPage(url, MOSS_REPORT_FOLDER + '/report.html')
-        mosspy.download_report(url, MOSS_REPORT_FOLDER +
-                               '/report/', connections=8)
-    else:
-        print('MOSS already done')
+        # Concatenate source files into a single file
+        with open(concatenated_file_path, 'w') as concatenated_file:
+            patterns_to_concatenate = ['*.cpp', '*.h', '*.inl']
+
+            source_file_paths_to_concatenate = []
+            for pattern in patterns_to_concatenate:
+                source_file_paths_to_concatenate.extend(unzipped_folder.glob(pattern))
+
+            for source_file_path in source_file_paths_to_concatenate:
+                with open(source_file_path, errors='replace') as source_file:
+                    concatenated_file.write(source_file.read())
+
+        # Only upload non-empty files
+        if concatenated_file_path.stat().st_size > 0:
+            moss.addFile(str(concatenated_file_path))
+
+    # Upload files
+    print('\tUploading files to Moss')
+    report_url = moss.send()
+
+    # Save generated report
+    print('\tDownloading Moss report')
+    moss.saveWebPage(report_url, MOSS_REPORT_FOLDER / 'report.html')
+    mosspy.download_report(report_url, MOSS_REPORT_FOLDER / 'report', connections=8)
 
 
 def main():
-    force_refresh = 'force' in sys.argv
+    args = sys.argv[1:]
+    is_moss_report_mode = 'moss' in args
+    force_refresh = 'force' in args
 
-    unzip_files(force_refresh)
-    grade_programs(force_refresh)
-    # upload_moss()
+    if not is_moss_report_mode:
+        unzip_files(force_refresh)
+        grade_programs(force_refresh)
+    else:
+        generate_moss_report(force_refresh)
 
 
 if __name__ == '__main__':
