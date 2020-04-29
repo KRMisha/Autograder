@@ -134,7 +134,7 @@ def prepare_grading_folder(unzipped_folder):
         shutil.copy(file, grading_folder / 'include')
 
     # Copy master files (and potentially overwrite student files)
-    shutil.copyfile(MASTER_FILES_FOLDER / 'Makefile', grading_folder / 'Makefile')
+    shutil.copy(MASTER_FILES_FOLDER / 'Makefile', grading_folder)
     for file in MASTER_FILES_FOLDER.glob('*.cpp'):
         shutil.copy(file, grading_folder / 'src')
     for file in MASTER_FILES_FOLDER.glob('*.h'):
