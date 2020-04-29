@@ -55,8 +55,7 @@ def unzip_files(force_refresh):
     # Extract all archives
     for archive in archives:
         # Create destination folder
-        destination_folder_filename = archive.parent.name + '_-_' + archive.stem
-        destination_folder = UNZIPPED_FILES_FOLDER / destination_folder_filename
+        destination_folder = UNZIPPED_FILES_FOLDER / archive.parent.name
         destination_folder.mkdir()
 
         # Output warning if archive format is unsupported
