@@ -1,8 +1,11 @@
 .venv/
 .vscode/
 
+grades/
 grading/
 master_files/
 moss_report/
 unzipped/
 zipped/
+
+teams_info.csv
