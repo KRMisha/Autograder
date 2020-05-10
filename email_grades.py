@@ -4,40 +4,37 @@ import csv
 import getpass
 import smtplib
 import ssl
+import sys
 import time
-from pathlib import Path
-
-SENDER_EMAIL = 'misha.krieger-raynauld@polymtl.ca'
-INDIVIDUAL_GRADES_FILENAME = Path('grades/individual_grades.csv')
-POINTS_TOTAL = 20
+import config
 
 
-def read_grades():
-    with open(INDIVIDUAL_GRADES_FILENAME, newline='') as csv_file:
+def load_grades():
+    if not config.INDIVIDUAL_GRADES_PATH.is_file():
+        sys.exit('Error: individual grades file does not exist')
+
+    with open(config.INDIVIDUAL_GRADES_PATH, newline='') as csv_file:
         reader = csv.DictReader(csv_file)
         return list(reader)
 
 
 def send_email(username, password, receiver_email, subject, body):
-    smtp_server = 'smtp.polymtl.ca'
-    port = 587
-
     message = f'Subject: {subject}\n\n{body}'
 
     context = ssl.create_default_context()
-    with smtplib.SMTP(smtp_server, port) as server:
+    with smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT) as server:
         server.ehlo()
         server.starttls(context=context)
         server.ehlo()
         server.login(username, password)
-        server.sendmail(SENDER_EMAIL, receiver_email, message.encode('utf8'))
+        server.sendmail(config.SENDER_EMAIL, receiver_email, message.encode('utf8'))
 
 
 def main():
-    username = input('Poly username: ')
-    password = getpass.getpass()
+    grades = load_grades()
 
-    grades = read_grades()
+    username = input('Username: ')
+    password = getpass.getpass()
 
     for grade in grades:
         subject = 'Correction TP5 - Notes'
@@ -48,7 +45,7 @@ def main():
                  'Veuillez svp vérifier que les informations suivantes sont correctes:\n'
                 f' - Matricule: {grade["ID"]}\n'
                 f' - Binôme: {grade["Team"]}\n\n'
-                f'Note: {grade["Grade"]}/{POINTS_TOTAL}\n\n'
+                f'Note: {grade["Grade"]}/{config.POINTS_TOTAL}\n\n'
                 f'Détail de la correction:\n{grade["Feedback"]}\n'
                  'Passez un bon été et prenez soin de vous!\n\n'
                  'Misha')
@@ -60,3 +57,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# Made by Misha Krieger-Raynauld and Simon Gauvin

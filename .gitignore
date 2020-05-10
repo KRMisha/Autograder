@@ -1,6 +1,8 @@
 .venv/
 .vscode/
 
+__pycache__/
+
 grades/
 grading/
 master_files/

@@ -1,0 +1,37 @@
+from pathlib import Path
+
+# Input files configuration
+ZIPPED_FILES_FOLDER = Path('zipped') # Contents should match Moodle batch download format
+MASTER_FILES_FOLDER = Path('master_files') # Include Makefile, *.cpp, *.h, and *.txt
+TEAMS_INFO_PATH = Path('teams_info.csv') # See calculate_grades.py for format
+
+# Output files configuration
+UNZIPPED_FILES_FOLDER = Path('unzipped')
+GRADING_OUTPUT_FOLDER = Path('grading')
+GRADING_WORKING_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'working'
+GRADING_COMPILATION_FAILED_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'compilation_failed'
+GRADING_CRASHED_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'crashed'
+MOSS_REPORT_FOLDER = Path('moss_report')
+GRADES_OUTPUT_FOLDER = Path('grades')
+INDIVIDUAL_GRADES_PATH = GRADES_OUTPUT_FOLDER / 'individual_grades.csv'
+TEAM_GRADES_PATH = GRADES_OUTPUT_FOLDER / 'team_grades.csv'
+
+# Grading settings
+POINTS_TO_REMOVE_FILENAME = 'points_to_rm.txt'
+POINTS_TOTAL = 20
+POINTS_FOR_TESTS = 6
+TESTS_RESULT_REGEX = r'Total pour tous les tests: (.*)\/6'
+PENALTY_FOR_WARNINGS = -1.5
+PENALTY_FOR_COMPILATION_FAILURE = -3
+PENALTY_FOR_CRASH = -2
+PENALTY_FOR_LEAKS = -2
+
+# Moss configuration
+MOSS_USER_ID = 297240028
+
+# Email report configuration
+SENDER_EMAIL = 'misha.krieger-raynauld@polymtl.ca'
+SMTP_SERVER = 'smtp.polymtl.ca'
+SMTP_PORT = 587
+
+# Made by Misha Krieger-Raynauld and Simon Gauvin
