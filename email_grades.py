@@ -5,8 +5,8 @@ import getpass
 import smtplib
 import ssl
 import sys
-import time
 import config
+from email.message import EmailMessage
 
 
 def load_grades():
@@ -18,16 +18,35 @@ def load_grades():
         return list(reader)
 
 
-def send_email(username, password, receiver_email, subject, body):
-    message = f'Subject: {subject}\n\n{body}'
-
+def send_emails(username, password, grades):
     context = ssl.create_default_context()
     with smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT) as server:
+        # Login
         server.ehlo()
         server.starttls(context=context)
         server.ehlo()
         server.login(username, password)
-        server.sendmail(config.SENDER_EMAIL, receiver_email, message.encode('utf8'))
+
+        # Send emails
+        for grade in grades:
+            print(f'Sending email to {grade["Email"]}')
+
+            message = EmailMessage()
+            message.set_content(
+                config.EMAIL_CONTENT.format(
+                    first_name=grade['FirstName'],
+                    id=grade['ID'], team=grade['Team'],
+                    grade=grade['Grade'],
+                    points_total=config.POINTS_TOTAL,
+                    feedback=grade['Feedback']
+                )
+            )
+
+            message['Subject'] = config.EMAIL_SUBJECT
+            message['From'] = config.SENDER_EMAIL
+            message['To'] = grade['Email']
+
+            server.send_message(message)
 
 
 def main():
@@ -36,23 +55,7 @@ def main():
     username = input('Username: ')
     password = getpass.getpass()
 
-    for grade in grades:
-        subject = 'Correction TP5 - Notes'
-        body = (f'Bonjour {grade["FirstName"]},\n\n'
-                 'Voici le détail de la correction pour le TP5. '
-                 'Si vous avez des questions, vous pouvez répondre à ce courriel '
-                 'et il me fera plaisir de vous expliquer.\n\n'
-                 'Veuillez svp vérifier que les informations suivantes sont correctes:\n'
-                f' - Matricule: {grade["ID"]}\n'
-                f' - Binôme: {grade["Team"]}\n\n'
-                f'Note: {grade["Grade"]}/{config.POINTS_TOTAL}\n\n'
-                f'Détail de la correction:\n{grade["Feedback"]}\n'
-                 'Passez un bon été et prenez soin de vous!\n\n'
-                 'Misha')
-
-        send_email(username, password, grade['Email'], subject, body)
-        print(f'Sent email to {grade["Email"]}')
-        time.sleep(10)
+    send_emails(username, password, grades)
 
 
 if __name__ == '__main__':
