@@ -185,7 +185,7 @@ def run_program(current_grading_folder):
 def check_program_for_leaks(current_grading_folder):
     # Run valgrind against program and save output
     try:
-        process = subprocess.run(['valgrind', '--leak-check=yes', '--error-exitcode=1', './project'],
+        process = subprocess.run(['valgrind', '--leak-check=yes', '--error-exitcode=1', './program'],
                                  capture_output=True, cwd=get_executable_path(current_grading_folder), timeout=60)
     except subprocess.TimeoutExpired:
         # Timeout when Valgrind takes too long (give up on detecting leaks)
