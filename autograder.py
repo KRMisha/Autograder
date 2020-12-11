@@ -211,7 +211,7 @@ def remove_points(current_grading_folder, points_to_remove, reason):
 def get_executable_path(current_grading_folder):
     # Parse executable folder from Makefile printvars target
     process = subprocess.run(['make', 'printvars'], capture_output=True, cwd=current_grading_folder)
-    match = re.search(r'BIN_DIR: (.*)', process.stdout.decode('utf-8'))
+    match = re.search(r'BIN_DIR: "(.*)"', process.stdout.decode('utf-8'))
     return current_grading_folder / match.group(1)
 
 
