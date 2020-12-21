@@ -27,15 +27,15 @@ PENALTY_FOR_CRASH = -2
 PENALTY_FOR_LEAKS = -2
 
 # Moss configuration
-MOSS_USER_ID = 297240028
+MOSS_USER_ID = 123456789
 
 # Email report configuration
 SMTP_SERVER = 'smtp.polymtl.ca'
 SMTP_PORT = 587
-SENDER_EMAIL = 'misha.krieger-raynauld@polymtl.ca'
-EMAIL_SUBJECT = 'INF1010 - Correction TP3'
+SENDER_EMAIL = 'autograder@polymtl.ca'
+EMAIL_SUBJECT = 'INF1010 - Correction TP#'
 EMAIL_CONTENT = ('Bonjour {first_name},\n\n'
-                 'Voici le détail de la correction pour le TP3. '
+                 'Voici le détail de la correction pour le TP#. '
                  'Si vous avez des questions, vous pouvez répondre à ce courriel '
                  'et il me fera plaisir de vous expliquer.\n\n'
                  'Veuillez svp vérifier que les informations suivantes sont correctes:\n'
@@ -44,6 +44,6 @@ EMAIL_CONTENT = ('Bonjour {first_name},\n\n'
                  'Note: {grade}/{points_total}\n\n'
                  'Détail de la correction:\n{feedback}\n'
                  'Passez une bonne journée,\n\n'
-                 'Misha Krieger-Raynauld')
+                 'Autograder')
 
 # Made by Misha Krieger-Raynauld and Simon Gauvin
