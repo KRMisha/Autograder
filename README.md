@@ -17,6 +17,9 @@ An automated grader for C++ projects!
 - Output all grades with feedback in a CSV
 - Email grades to every student with their individual feedback
 
+Example:
+![Autograder output](https://user-images.githubusercontent.com/30484238/102819793-318cb500-43a2-11eb-9631-10775fbd0a0b.png)
+
 ## Prerequisites
 
 - GCC & Make
