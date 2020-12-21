@@ -52,7 +52,6 @@ def generate_moss_report(force_refresh):
 
     # Save generated report
     print('\tDownloading Moss report')
-    moss.saveWebPage(report_url, config.MOSS_REPORT_FOLDER / 'report.html')
     mosspy.download_report(report_url, config.MOSS_REPORT_FOLDER / 'report', connections=8)
 
 
