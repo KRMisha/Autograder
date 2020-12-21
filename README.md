@@ -108,7 +108,7 @@ Unzip and autograde all submissions in a single step:
 This will first unzip all the zipped submissions into a new `unzipped` directory. Then, the following will be done for each submission:
 - Copy the unzipped files and master files to a team folder inside the `grading` directory
 - Compile the program
-- Output any compilation errors and warnings to `make_stderr.txt`
+- Output any compilation errors and warnings to `make_stderr.txt` (depending on the warning options set in the Makefile)
 - Run the program and save its output to `program_output.txt` (with both stdout and stderr)
 - Parse the test results from the program output
 - Output any memory leaks detected with Valgrind to `valgrind_stderr.txt`
