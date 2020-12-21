@@ -183,10 +183,13 @@ def run_program(current_grading_folder):
 
 
 def check_program_for_leaks(current_grading_folder):
+    # Parse executable path from Makefile
+    executable_path = get_executable_path(current_grading_folder)
+
     # Run valgrind against program and save output
     try:
-        process = subprocess.run(['valgrind', '--leak-check=yes', '--error-exitcode=1', './program'],
-                                 capture_output=True, cwd=get_executable_path(current_grading_folder), timeout=60)
+        process = subprocess.run(['valgrind', '--leak-check=yes', '--error-exitcode=1', './' + executable_path.name],
+                                 capture_output=True, cwd=executable_path.parent, timeout=60)
     except subprocess.TimeoutExpired:
         # Timeout when Valgrind takes too long (give up on detecting leaks)
         print(f' | Leaks: Timed out', end='')
@@ -211,8 +214,10 @@ def remove_points(current_grading_folder, points_to_remove, reason):
 def get_executable_path(current_grading_folder):
     # Parse executable folder from Makefile printvars target
     process = subprocess.run(['make', 'printvars'], capture_output=True, cwd=current_grading_folder)
-    match = re.search(r'BIN_DIR: "(.*)"', process.stdout.decode('utf-8'))
-    return current_grading_folder / match.group(1)
+    stdout = process.stdout.decode('utf-8')
+    bin_dir_match = re.search(r'BIN_DIR: "(.*)"', stdout)
+    exec_match = re.search(r'EXEC: "(.*)"', stdout)
+    return current_grading_folder / bin_dir_match.group(1) / exec_match.group(1)
 
 
 def main():
