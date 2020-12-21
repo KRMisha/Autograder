@@ -182,7 +182,7 @@ After you provide your email login credentials at the prompt, an email will be s
 │   │   ├── S1_G6
 │   │   │   ├── <team files>
 │   │   │   ├── compilation_stderr.txt      # Make stderr output (compilation errors and warnings)
-│   │   │   ├── compilation_stdout.txt      # Make stdout output (which files compiled successfully)
+│   │   │   ├── compilation_stdout.txt      # Make stdout output (what compiled successfully)
 │   │   │   └── points_to_rm.txt            # List of all removed points and feedback
 │   │   └── ...
 │   ├── crashed                             # Programs which compiled but crashed
@@ -202,7 +202,7 @@ After you provide your email login credentials at the prompt, an email will be s
 │       │   ├── program_output.txt
 │       │   └── valgrind_stderr.txt         # The stderr output for valgrind
 │       └── ...
-├── master_files                            # The master files which are copied into each submission
+├── master_files                            # The master files copied into each submission
 │   └── <files>
 ├── moss_report
 │   ├── concatenated_files
