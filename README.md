@@ -49,7 +49,7 @@ An automated grader for C++ projects!
 
 ## Setup
 
-1. Download all the student submissions from your university's web portal (e.g. Moodle). Save them to a new directory named `zipped` at the root of the project.
+1. Download all the student submissions from your university's web portal (e.g. Moodle). Save them to the `zipped` directory.
 
     > The `zipped` directory should contain a list of folders each named with the submission's team name. Inside each of these team folders should be the respective team's turned in work as a zip archive. The name of the zip archive does not need to follow a specific convention.
 
@@ -65,7 +65,7 @@ An automated grader for C++ projects!
     └── ...
     ```
 
-2. Create a *tab-delimited* CSV named `teams_info.csv` at the root of the project and populate it with each student's information. The format should be as follows:
+2. Fill in the tab-delimited `teams_info.csv` file with each student's information. For example:
 
     |LastName|FirstName    |ID     |Email                 |Team |
     |--------|-------------|-------|----------------------|-----|
@@ -75,15 +75,15 @@ An automated grader for C++ projects!
     |Last4   |First4       |1234570|first4.last4@email.com|S2_G9|
     |...     |...          |...    |...                   |...  |
 
-    Make sure to include a header row with the named fields shown above.
+    Make sure to keep the header row with the named fields shown above.
 
-    > The "Team" column's values should match the folder names inside the `zipped` directory. This is how the Autograder will match submissions with their author.
+    > The `Team` column's values should match the folder names inside the `zipped` directory. This is how the Autograder will match submissions with their author.
 
-3. Create a new directory named `master_files`. Add any files you wish to have automatically added to every team's submission (overwriting them if they already exist) before grading.
+3. In the `master_files` directory, add any files you wish to have automatically copied to every team's submission before compiling (overwriting them if they already exist).
 
     This is useful for making sure each project has a Makefile, input text files, or that certain source files have not been tampered with by students (such as unit tests). Any files ending in a `.txt` file extension will automatically be copied into the built executable's directory.
 
-    Recommended: use [this Makefile](https://github.com/KRMisha/Makefile) to avoid needing to tweak `autograder.py`.
+    Tip: use the provided Makefile ([repo](https://github.com/KRMisha/Makefile)) to avoid needing to tweak `autograder.py`.
 
 4. Edit the `config.py` file according to your needs:
     - Edit the "Grading settings" section to change the penalties associated with certain errors.

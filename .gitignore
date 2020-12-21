@@ -2,12 +2,3 @@
 .vscode/
 
 __pycache__/
-
-grades/
-grading/
-master_files/
-moss_report/
-unzipped/
-zipped/
-
-teams_info.csv
