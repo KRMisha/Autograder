@@ -146,9 +146,9 @@ def compile_program(current_grading_folder):
 
 
 def run_program(current_grading_folder):
-    # Copy master text files
+    # Copy master text files to executable directory
     for file in config.MASTER_FILES_FOLDER.glob('*.txt'):
-        shutil.copy(file, get_executable_path(current_grading_folder))
+        shutil.copy(file, get_executable_path(current_grading_folder).parent)
 
     # Run program with Makefile and save output
     process = subprocess.run(['make', 'run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder)
