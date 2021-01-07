@@ -2,7 +2,7 @@ astroid==2.3.3
 beautifulsoup4==4.9.0
 isort==4.3.21
 lazy-object-proxy==1.4.3
-lxml==4.5.0
+lxml==4.6.2
 mccabe==0.6.1
 mosspy==1.0.8
 pkg-resources==0.0.0
