@@ -1,4 +1,4 @@
 beautifulsoup4==4.9.3
-lxml==4.6.2
+lxml==4.6.3
 mosspy==1.0.8
 soupsieve==2.1
