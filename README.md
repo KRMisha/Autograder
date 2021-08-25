@@ -175,7 +175,7 @@ After you provide your email login credentials at the prompt, an email will be s
 ```
 .
 ├── grades
-│   └── individual_grades.csv               # Final grades for each student
+│   ├── individual_grades.csv               # Final grades for each student
 │   └── team_grades.csv                     # Final grades grouped by team
 ├── grading
 │   ├── compilation_failed                  # Programs which did not compile
