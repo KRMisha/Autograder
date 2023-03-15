@@ -16,6 +16,9 @@ GRADES_OUTPUT_FOLDER = Path('./grades')
 INDIVIDUAL_GRADES_PATH = GRADES_OUTPUT_FOLDER / 'individual_grades.csv'
 TEAM_GRADES_PATH = GRADES_OUTPUT_FOLDER / 'team_grades.csv'
 
+TEST_INPUT_FOLDER = Path('./inputs')
+TEST_OUTPUT_FOLDER = Path('./outputs')
+
 # Grading settings
 POINTS_TO_REMOVE_FILENAME = 'points_to_rm.txt'
 POINTS_TOTAL = 100

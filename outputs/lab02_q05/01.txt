@@ -1,0 +1,1 @@
+Celsius value is 0

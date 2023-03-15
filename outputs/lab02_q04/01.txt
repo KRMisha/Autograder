@@ -1,0 +1,2 @@
+value of A is : 50
+value of B is : 30

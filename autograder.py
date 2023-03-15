@@ -8,7 +8,9 @@ import subprocess
 import sys
 import zipfile
 import config
-
+import pickle
+from pathlib import Path
+from difflib import SequenceMatcher
 
 def unzip_files(force_refresh):
     if config.UNZIPPED_FILES_FOLDER.is_dir():
@@ -52,21 +54,8 @@ def unzip_files(force_refresh):
                     continue
 
                 file_info.filename = os.path.basename(file_info.filename)
-                zipped_file.extract(file_info, destination_folder)
-
-        for (root, dirs, _) in os.walk(config.UNZIPPED_FILES_FOLDER):
-            if len(dirs) > 0:
-                for dir in dirs:
-                    for (rt, _, files) in os.walk(config.UNZIPPED_FILES_FOLDER.joinpath(dir)):
-                        if len(files) > 0:
-                            for file in files:
-                                if file.endswith('.cpp') or file.endswith('.h'):
-                                    print(file)
-                                    os.makedirs(os.path.join(root,dir+'_'+file.split('.')[0]), exist_ok=True)
-                                    shutil.move(os.path.join(rt,file), os.path.join(root,dir+'_'+file.split('.')[0]))
-                    os.removedirs(os.path.join(root,dir))
-    print()
-
+                folder = destination_folder.as_posix().split('/')[-1]
+                zipped_file.extract(file_info, os.path.join(destination_folder, (folder + '_' + file_info.filename.split('.')[0]).lower()))
 
 def grade_programs(force_refresh):
     if config.GRADING_OUTPUT_FOLDER.is_dir():
@@ -89,20 +78,21 @@ def grade_programs(force_refresh):
 
     unzipped_folders = list(config.UNZIPPED_FILES_FOLDER.iterdir())
     for index, current_unzipped_folder in enumerate(unzipped_folders, 1):
-        print(f'\t{index}/{len(unzipped_folders)}: {current_unzipped_folder.name}', end='')
+        for i, worker in enumerate(current_unzipped_folder.iterdir()):
+            print(f'\t{index}/{len(unzipped_folders)}: {current_unzipped_folder.name}', end='')
 
-        current_grading_folder = prepare_grading_folder(current_unzipped_folder)
+            current_grading_folder = prepare_grading_folder(worker)
 
-        if not compile_program(current_grading_folder):
-            continue
+            if not compile_program(current_grading_folder):
+                continue
+        
+            if not run_program(current_grading_folder):
+                continue
 
-        if not run_program(current_grading_folder):
-            continue
+            check_program_for_leaks(current_grading_folder)
 
-        check_program_for_leaks(current_grading_folder)
-
-        print()
-
+            print()
+            sys.stdout.flush()
 
 def prepare_grading_folder(unzipped_folder):
     # Create folder structure
@@ -163,35 +153,73 @@ def run_program(current_grading_folder):
     for file in config.MASTER_FILES_FOLDER.glob('*.txt'):
         shutil.copy(file, get_executable_path(current_grading_folder).parent)
 
-    # Run program with Makefile and save output
-    process = subprocess.run(['make', 'run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder)
-    with open(current_grading_folder / 'program_output.txt', 'wb') as file:
-        file.write(process.stdout)
+    num_tests = 0
+    num_tests_passed = 0
 
-    # Check if program crashed
-    program_crashed = process.returncode != 0
-    print(f' | Crashed: {program_crashed}', end='')
+    print(f' | Test : ', end='')
+    name = current_grading_folder.as_posix().split('/')[-1].lower()
+    name = name.split('_')[-2] + '_' + name.split('_')[-1]
+    try:
+        for finput, foutput in zip(Path(os.path.join(config.TEST_INPUT_FOLDER, name)).iterdir(), Path(os.path.join(config.TEST_OUTPUT_FOLDER, name)).iterdir()):
+            pass
+            with open(finput, 'rb') as test_input:
+                process = subprocess.run(['make', 'run'], stdin=test_input, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder, timeout=5)
+                with open(current_grading_folder / 'program_output.txt', 'wb') as finput:
+                    finput.write(process.stdout)
+                try:
+                    output = process.stdout.decode('utf-8')
+                except:
+                    output = process.stdout.decode('cp949')
+            output = output[output.find('\n') + 1:]
+            with open(foutput, 'r') as foutput:
+                expected = foutput.read()
+            num_tests += 1
+            if len(expected) == 0:
+                num_tests_passed += 1
+                continue
+            if expected in output:
+                num_tests_passed += 1
+                continue
+    except:
+        print('No test input', end='')
 
-    if program_crashed:
-        print()
-        remove_points(current_grading_folder, config.PENALTY_FOR_CRASH, 'Programme crash')
-        current_grading_folder.replace(config.GRADING_CRASHED_SUBFOLDER / current_grading_folder.name)
-        return False
+    print(f' {num_tests_passed}/{num_tests}', end='')
+                
 
-    # Parse automated test results
-    match = re.search(config.TESTS_RESULT_REGEX, process.stdout.decode('utf-8'))
-    tests_result = float(match.group(1)) if match else '?'
+    # # Run program with Makefile and save output
+    # process = subprocess.run(['make', 'run'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder)
+    # # process.communicate(input=open(config.MASTER_FILES_FOLDER / 'input.txt', 'rb').read())
+    # with open(current_grading_folder / 'program_output.txt', 'wb') as file:
+    #     file.write(process.stdout)
 
-    if tests_result != '?':
-        lost_test_points = - (config.POINTS_FOR_TESTS - tests_result)
-        should_remove_points = lost_test_points < 0
-    else:
-        lost_test_points = '-?'
-        should_remove_points = True
+    # # Check if program crashed
+    # program_crashed = process.returncode != 0
+    # print(f' | Crashed: {program_crashed}', end='')
 
-    if should_remove_points:
-        remove_points(current_grading_folder, lost_test_points, f'Échec de certains tests ({tests_result}/{config.POINTS_FOR_TESTS})')
-    print(f' | Tests: {tests_result}/{config.POINTS_FOR_TESTS}', end='')
+    # if program_crashed:
+    #     print()
+    #     remove_points(current_grading_folder, config.PENALTY_FOR_CRASH, 'Programme crash')
+    #     current_grading_folder.replace(config.GRADING_CRASHED_SUBFOLDER / current_grading_folder.name)
+    #     return False
+
+    # # Parse automated test results
+    # try:
+    #     output = process.stdout.decode('utf-8')
+    # except:
+    #     output = process.stdout.decode('cp949')
+
+    # tests_result = float(match.group(1)) if match else '?'
+
+    # if tests_result != '?':
+    #     lost_test_points = - (config.POINTS_FOR_TESTS - tests_result)
+    #     should_remove_points = lost_test_points < 0
+    # else:
+    #     lost_test_points = '-?'
+    #     should_remove_points = True
+
+    # if should_remove_points:
+    #     remove_points(current_grading_folder, lost_test_points, f'Échec de certains tests ({tests_result}/{config.POINTS_FOR_TESTS})')
+    # print(f' | Tests: {tests_result}/{config.POINTS_FOR_TESTS}', end='')
     return True
 
 
@@ -199,24 +227,40 @@ def check_program_for_leaks(current_grading_folder):
     # Parse executable path from Makefile
     executable_path = get_executable_path(current_grading_folder)
 
-    # Run valgrind against program and save output
+    num_tests = 0
+    num_tests_passed = 0
+    name = current_grading_folder.as_posix().split('/')[-1].lower()
+    name = name.split('_')[-2] + '_' + name.split('_')[-1]
+
     try:
-        process = subprocess.run(['valgrind', '--leak-check=yes', '--error-exitcode=1', './' + executable_path.name],
-                                 capture_output=True, cwd=executable_path.parent, timeout=60)
-    except subprocess.TimeoutExpired:
-        # Timeout when Valgrind takes too long (give up on detecting leaks)
-        print(f' | Leaks: Timed out', end='')
-        return
+        for finput, foutput in zip(Path(os.path.join(config.TEST_INPUT_FOLDER, name)).iterdir(), Path(os.path.join(config.TEST_OUTPUT_FOLDER, name)).iterdir()):
+            pass
+            with open(finput, 'rb') as test_input:
+                try:
+                    process = subprocess.run(['valgrind', '--leak-check=yes', '--error-exitcode=1', './' + executable_path.name],
+                                            stdin = test_input, capture_output=True, cwd=executable_path.parent, timeout=60)
+                except subprocess.TimeoutExpired:
+                    # Timeout when Valgrind takes too long (give up on detecting leaks)
+                    print(f' | Leaks: Timed out', end='')
+                    return
+            
+            with open(current_grading_folder / 'valgrind_stderr.txt', 'wb') as file:
+                file.write(process.stderr)
 
-    with open(current_grading_folder / 'valgrind_stderr.txt', 'wb') as file:
-        file.write(process.stderr)
+            # Check for memory leaks
+            leaks_found = process.returncode == 1
+            if leaks_found:
+                print(f' | Leaks: {leaks_found}', end='')
+                break
+        print(f' | Leaks: {leaks_found}', end='')
+        if leaks_found:
+            remove_points(current_grading_folder, config.PENALTY_FOR_LEAKS, 'Fuite de mémoire')
+    except:
+        print('| Leaks: No test input', end='')
 
-    # Check for memory leaks
-    leaks_found = process.returncode == 1
-    print(f' | Leaks: {leaks_found}', end='')
-
-    if leaks_found:
-        remove_points(current_grading_folder, config.PENALTY_FOR_LEAKS, 'Fuite de mémoire')
+    # Run valgrind against program and save output
+    
+    
 
 
 def remove_points(current_grading_folder, points_to_remove, reason):

@@ -1,2 +1,0 @@
--20: Warnings
--?: Échec de certains tests (?/100)

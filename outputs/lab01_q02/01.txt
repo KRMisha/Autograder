@@ -1,0 +1,4 @@
+sizeof(siX):2
+sizeof(iX):4
+sizeof(liX):4
+sizeof(lliX):8
