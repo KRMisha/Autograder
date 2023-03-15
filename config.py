@@ -1,18 +1,18 @@
 from pathlib import Path
 
 # Input files configuration
-ZIPPED_FILES_FOLDER = Path('/Users/2eastho/Desktop/class/autograde/Autograder/zipped') # Contents should match Moodle batch download format
-MASTER_FILES_FOLDER = Path('/Users/2eastho/Desktop/class/autograde/Autograder/master_files') # Include Makefile, *.cpp, *.h, and *.txt
-TEAMS_INFO_PATH = Path('/Users/2eastho/Desktop/class/autograde/Autograder/teams_info.csv') # See calculate_grades.py for format
+ZIPPED_FILES_FOLDER = Path('./zipped') # Contents should match Moodle batch download format
+MASTER_FILES_FOLDER = Path('./master_files') # Include Makefile, *.cpp, *.h, and *.txt
+TEAMS_INFO_PATH = Path('./teams_info.csv') # See calculate_grades.py for format
 
 # Output files configuration
-UNZIPPED_FILES_FOLDER = Path('/Users/2eastho/Desktop/class/autograde/Autograder/unzipped')
-GRADING_OUTPUT_FOLDER = Path('/Users/2eastho/Desktop/class/autograde/Autograder/grading')
+UNZIPPED_FILES_FOLDER = Path('./unzipped')
+GRADING_OUTPUT_FOLDER = Path('./grading')
 GRADING_WORKING_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'working'
 GRADING_COMPILATION_FAILED_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'compilation_failed'
 GRADING_CRASHED_SUBFOLDER = GRADING_OUTPUT_FOLDER / 'crashed'
 MOSS_REPORT_FOLDER = Path('moss_report')
-GRADES_OUTPUT_FOLDER = Path('/Users/2eastho/Desktop/class/autograde/Autograder/grades')
+GRADES_OUTPUT_FOLDER = Path('./grades')
 INDIVIDUAL_GRADES_PATH = GRADES_OUTPUT_FOLDER / 'individual_grades.csv'
 TEAM_GRADES_PATH = GRADES_OUTPUT_FOLDER / 'team_grades.csv'
 

@@ -53,6 +53,18 @@ def unzip_files(force_refresh):
 
                 file_info.filename = os.path.basename(file_info.filename)
                 zipped_file.extract(file_info, destination_folder)
+
+        for (root, dirs, _) in os.walk(config.UNZIPPED_FILES_FOLDER):
+            if len(dirs) > 0:
+                for dir in dirs:
+                    for (rt, _, files) in os.walk(config.UNZIPPED_FILES_FOLDER.joinpath(dir)):
+                        if len(files) > 0:
+                            for file in files:
+                                if file.endswith('.cpp') or file.endswith('.h'):
+                                    print(file)
+                                    os.makedirs(os.path.join(root,dir+'_'+file.split('.')[0]), exist_ok=True)
+                                    shutil.move(os.path.join(rt,file), os.path.join(root,dir+'_'+file.split('.')[0]))
+                    os.removedirs(os.path.join(root,dir))
     print()
 
 
