@@ -1,0 +1,2 @@
+Starting program: bin/linux/debug/program
+제 이름은 강병훈입니다.

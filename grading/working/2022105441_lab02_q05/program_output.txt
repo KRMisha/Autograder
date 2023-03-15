@@ -1,0 +1,2 @@
+Starting program: bin/linux/debug/program
+화씨 온도를 입력해주세요 : 섭씨 온도 : 0

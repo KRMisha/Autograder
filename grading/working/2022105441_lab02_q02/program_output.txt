@@ -1,0 +1,7 @@
+Starting program: bin/linux/debug/program
+두개의 정수를 입력해주세요
+6 + 2 = 8
+6 - 2 = 4
+6 * 2 = 12
+6 / 2 = 3
+6 % 2 = 0

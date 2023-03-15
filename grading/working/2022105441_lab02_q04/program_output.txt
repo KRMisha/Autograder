@@ -1,0 +1,4 @@
+Starting program: bin/linux/debug/program
+두 정수를 입력해주세요.
+A : B : value of A is : 50
+value of B is : 30
