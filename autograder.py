@@ -27,13 +27,14 @@ def unzip_files(force_refresh):
     config.UNZIPPED_FILES_FOLDER.mkdir()
 
     # Initialize generator for all archives
-    archives = (archive for archive in config.ZIPPED_FILES_FOLDER.glob('*/*') if archive.is_file())
+    archives = (archive for archive in config.ZIPPED_FILES_FOLDER.glob('*') if archive.is_file())
 
     # Extract all archives
     for archive in archives:
         # Create destination folder
-        destination_folder = config.UNZIPPED_FILES_FOLDER / archive.parent.name
-        destination_folder.mkdir()
+        section = archive.name.split("_")
+        destination_folder = config.UNZIPPED_FILES_FOLDER.joinpath(section[3])
+        os.makedirs(destination_folder, exist_ok=True)
 
         # Output warning if archive format is unsupported
         if archive.suffix != '.zip':

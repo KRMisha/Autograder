@@ -1,0 +1,44 @@
+src/Lab02_q01.cpp:7:28: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        cout << "My name is " << "<B0><AD><B8><ED><B1><B8>" << endl;
+                                  ^~~~~~~~~~~~~~~~~~~~~~~~
+src/Lab02_q02.cpp:9:12: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        cout << "A<C0><C7> <B0><AA><C0><BB> <C0>Է<C2><C7>Ͻÿ<C0>: ";
+                  ^~~~~~~~ ~~~~~~~~~~~~~~~~ ~~~~ ~~~~~~~~  ~~~~
+src/Lab02_q02.cpp:11:12: warning: illegal character encoding in string literal [-Winvalid-source-encoding]
+        cout << "B<C0><C7> <B0><AA><C0><BB> <C0>Է<C2><C7>Ͻÿ<C0>: ";
+                  ^~~~~~~~ ~~~~~~~~~~~~~~~~ ~~~~ ~~~~~~~~  ~~~~
+1 warning generated.
+2 warnings generated.
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab01_q02.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab02_q03.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab01_q03.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab01_q05.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab01_q04.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab02_q01.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab02_q02.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab02_q04.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab02_q05.o
+duplicate symbol '_main' in:
+    build/macos/debug/Lab01_q01.o
+    build/macos/debug/Lab02_q04_plus.o
+ld: 10 duplicate symbols for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make: *** [bin/macos/debug/program] Error 1

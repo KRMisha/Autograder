@@ -1,0 +1,12 @@
+Compiling: src/Lab01_q03.cpp
+Compiling: src/Lab01_q05.cpp
+Compiling: src/Lab01_q01.cpp
+Compiling: src/Lab01_q04.cpp
+Compiling: src/Lab02_q01.cpp
+Compiling: src/Lab01_q02.cpp
+Compiling: src/Lab02_q02.cpp
+Compiling: src/Lab02_q04.cpp
+Compiling: src/Lab02_q03.cpp
+Compiling: src/Lab02_q04_plus.cpp
+Compiling: src/Lab02_q05.cpp
+Building executable: bin/macos/debug/program
