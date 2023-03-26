@@ -1,0 +1,6 @@
+Starting program: bin/linux/debug/program
+Please enter two integar values :A + B =8
+A - B =4
+A * B = 12
+A / B = 3
+A % B = 0

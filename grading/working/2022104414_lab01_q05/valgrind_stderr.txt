@@ -1,0 +1,14 @@
+==6504== Memcheck, a memory error detector
+==6504== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==6504== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==6504== Command: ./program
+==6504== 
+==6504== 
+==6504== HEAP SUMMARY:
+==6504==     in use at exit: 0 bytes in 0 blocks
+==6504==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==6504== 
+==6504== All heap blocks were freed -- no leaks are possible
+==6504== 
+==6504== For lists of detected and suppressed errors, rerun with: -s
+==6504== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -1,0 +1,6 @@
+Starting program: bin/linux/debug/program
+A + B= 8
+A - B= 4
+A * B= 12
+x / y= 3
+A % B= 0

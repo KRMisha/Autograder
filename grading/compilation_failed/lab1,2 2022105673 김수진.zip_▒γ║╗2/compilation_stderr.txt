@@ -1,0 +1,22 @@
+src/▒Γ║╗2.cpp:2:16: error: expected identifier before ‘;’ token
+    2 | using namespace;
+      |                ^
+src/▒Γ║╗2.cpp: In function ‘int main()’:
+src/▒Γ║╗2.cpp:9:9: error: ‘cout’ was not declared in this scope; did you mean ‘std::cout’?
+    9 |         cout << "sizeof(siX):" << sizeof(siX) << endl;
+      |         ^~~~
+      |         std::cout
+In file included from src/▒Γ║╗2.cpp:1:
+/usr/include/c++/11/iostream:61:18: note: ‘std::cout’ declared here
+   61 |   extern ostream cout;          /// Linked to standard output
+      |                  ^~~~
+src/▒Γ║╗2.cpp:9:50: error: ‘endl’ was not declared in this scope; did you mean ‘std::endl’?
+    9 |         cout << "sizeof(siX):" << sizeof(siX) << endl;
+      |                                                  ^~~~
+      |                                                  std::endl
+In file included from /usr/include/c++/11/iostream:39,
+                 from src/▒Γ║╗2.cpp:1:
+/usr/include/c++/11/ostream:684:5: note: ‘std::endl’ declared here
+  684 |     endl(basic_ostream<_CharT, _Traits>& __os)
+      |     ^~~~
+make: *** [Makefile:158: build/linux/debug/▒Γ║╗2.o] Error 1

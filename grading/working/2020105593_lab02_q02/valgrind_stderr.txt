@@ -1,0 +1,14 @@
+==18238== Memcheck, a memory error detector
+==18238== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==18238== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==18238== Command: ./program
+==18238== 
+==18238== 
+==18238== HEAP SUMMARY:
+==18238==     in use at exit: 0 bytes in 0 blocks
+==18238==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==18238== 
+==18238== All heap blocks were freed -- no leaks are possible
+==18238== 
+==18238== For lists of detected and suppressed errors, rerun with: -s
+==18238== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

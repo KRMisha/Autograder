@@ -1,0 +1,2 @@
+Starting program: bin/linux/debug/program
+³ª´Â ±èºÎ¼º

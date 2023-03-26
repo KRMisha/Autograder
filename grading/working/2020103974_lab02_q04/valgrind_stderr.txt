@@ -1,0 +1,14 @@
+==2534== Memcheck, a memory error detector
+==2534== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==2534== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==2534== Command: ./program
+==2534== 
+==2534== 
+==2534== HEAP SUMMARY:
+==2534==     in use at exit: 0 bytes in 0 blocks
+==2534==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==2534== 
+==2534== All heap blocks were freed -- no leaks are possible
+==2534== 
+==2534== For lists of detected and suppressed errors, rerun with: -s
+==2534== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

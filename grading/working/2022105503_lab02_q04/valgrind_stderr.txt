@@ -1,0 +1,14 @@
+==20938== Memcheck, a memory error detector
+==20938== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==20938== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==20938== Command: ./program
+==20938== 
+==20938== 
+==20938== HEAP SUMMARY:
+==20938==     in use at exit: 0 bytes in 0 blocks
+==20938==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==20938== 
+==20938== All heap blocks were freed -- no leaks are possible
+==20938== 
+==20938== For lists of detected and suppressed errors, rerun with: -s
+==20938== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

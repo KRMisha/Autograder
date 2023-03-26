@@ -1,0 +1,4 @@
+src/lab02_q05.cpp: In function ‘int main()’:
+src/lab02_q05.cpp:5:16: warning: variable ‘C’ set but not used [-Wunused-but-set-variable]
+    5 |         double C=5/9, F=9/5;
+      |                ^

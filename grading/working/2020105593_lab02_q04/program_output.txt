@@ -1,0 +1,3 @@
+Starting program: bin/linux/debug/program
+a : b : value of a is : 50
+value of b is : 30

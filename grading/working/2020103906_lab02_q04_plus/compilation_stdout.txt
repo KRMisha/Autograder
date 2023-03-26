@@ -1,2 +1,2 @@
-Compiling: src/Lab02_q04_plus.cpp
+Compiling: src/lab02_q04_plus.cpp
 Building executable: bin/linux/debug/program

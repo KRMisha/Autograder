@@ -1,0 +1,14 @@
+==2390== Memcheck, a memory error detector
+==2390== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==2390== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==2390== Command: ./program
+==2390== 
+==2390== 
+==2390== HEAP SUMMARY:
+==2390==     in use at exit: 0 bytes in 0 blocks
+==2390==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==2390== 
+==2390== All heap blocks were freed -- no leaks are possible
+==2390== 
+==2390== For lists of detected and suppressed errors, rerun with: -s
+==2390== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

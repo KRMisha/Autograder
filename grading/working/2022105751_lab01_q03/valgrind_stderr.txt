@@ -1,0 +1,14 @@
+==29672== Memcheck, a memory error detector
+==29672== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==29672== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==29672== Command: ./program
+==29672== 
+==29672== 
+==29672== HEAP SUMMARY:
+==29672==     in use at exit: 0 bytes in 0 blocks
+==29672==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==29672== 
+==29672== All heap blocks were freed -- no leaks are possible
+==29672== 
+==29672== For lists of detected and suppressed errors, rerun with: -s
+==29672== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -1,0 +1,4 @@
+src/lab01_q07.cpp: In function ‘int main()’:
+src/lab01_q07.cpp:6:20: warning: unused variable ‘percent’ [-Wunused-variable]
+    6 |         float div, percent;
+      |                    ^~~~~~~

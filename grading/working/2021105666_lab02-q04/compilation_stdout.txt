@@ -1,0 +1,2 @@
+Compiling: src/lab02-q04.cpp
+Building executable: bin/linux/debug/program

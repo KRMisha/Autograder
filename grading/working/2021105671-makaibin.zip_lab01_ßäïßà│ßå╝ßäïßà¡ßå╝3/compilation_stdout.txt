@@ -1,0 +1,2 @@
+Compiling: src/lab01_ßäïßà│ßå╝ßäïßà¡ßå╝3.cpp
+Building executable: bin/linux/debug/program

@@ -1,0 +1,2 @@
+Starting program: bin/linux/debug/program
+please enter Fahrenheit value: Celsius avlue is 0

@@ -1,0 +1,5 @@
+Starting program: bin/linux/debug/program
+12	14
+x+y26
+x*y168
+x/y0.857143

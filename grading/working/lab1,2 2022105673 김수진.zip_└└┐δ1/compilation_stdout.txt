@@ -1,0 +1,2 @@
+Compiling: src/└└┐δ1.cpp
+Building executable: bin/linux/debug/program

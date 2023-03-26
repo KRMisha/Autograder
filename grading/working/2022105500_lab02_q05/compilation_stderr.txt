@@ -1,0 +1,7 @@
+src/lab02_q05.cpp: In function ‘int main(int, const char**)’:
+src/lab02_q05.cpp:11:14: warning: unused parameter ‘argc’ [-Wunused-parameter]
+   11 | int main(int argc, const char * argv[]) {
+      |          ~~~~^~~~
+src/lab02_q05.cpp:11:33: warning: unused parameter ‘argv’ [-Wunused-parameter]
+   11 | int main(int argc, const char * argv[]) {
+      |                    ~~~~~~~~~~~~~^~~~~~

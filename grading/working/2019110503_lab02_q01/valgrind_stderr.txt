@@ -1,0 +1,14 @@
+==3450== Memcheck, a memory error detector
+==3450== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3450== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3450== Command: ./program
+==3450== 
+==3450== 
+==3450== HEAP SUMMARY:
+==3450==     in use at exit: 0 bytes in 0 blocks
+==3450==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==3450== 
+==3450== All heap blocks were freed -- no leaks are possible
+==3450== 
+==3450== For lists of detected and suppressed errors, rerun with: -s
+==3450== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

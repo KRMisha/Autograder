@@ -1,0 +1,14 @@
+==5004== Memcheck, a memory error detector
+==5004== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5004== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==5004== Command: ./program
+==5004== 
+==5004== 
+==5004== HEAP SUMMARY:
+==5004==     in use at exit: 0 bytes in 0 blocks
+==5004==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==5004== 
+==5004== All heap blocks were freed -- no leaks are possible
+==5004== 
+==5004== For lists of detected and suppressed errors, rerun with: -s
+==5004== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -1,0 +1,12 @@
+src/lab02_q02.cpp: In function ‘int main(int, const char**)’:
+src/lab02_q02.cpp:18:51: error: unable to find numeric literal operator ‘operator""value1’
+   18 |     cout << value1 << " % " << value2 << " = " << 6value1 % value2 << endl;
+      |                                                   ^~~~~~~
+src/lab02_q02.cpp:18:51: note: use ‘-fext-numeric-literals’ to enable more built-in suffixes
+src/lab02_q02.cpp:10:14: warning: unused parameter ‘argc’ [-Wunused-parameter]
+   10 | int main(int argc, const char * argv[]) {
+      |          ~~~~^~~~
+src/lab02_q02.cpp:10:33: warning: unused parameter ‘argv’ [-Wunused-parameter]
+   10 | int main(int argc, const char * argv[]) {
+      |                    ~~~~~~~~~~~~~^~~~~~
+make: *** [Makefile:158: build/linux/debug/lab02_q02.o] Error 1

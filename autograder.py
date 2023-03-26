@@ -10,6 +10,7 @@ import sys
 import zipfile
 import config
 import pickle
+import pandas as pd
 from pathlib import Path
 from difflib import SequenceMatcher
 
@@ -36,7 +37,10 @@ def unzip_files(force_refresh):
     for archive in archives:
         # Create destination folder
         section = archive.name.split("_")
-        destination_folder = config.UNZIPPED_FILES_FOLDER.joinpath(section[3])
+        if section[1] == 'LATE' :
+            destination_folder = config.UNZIPPED_FILES_FOLDER.joinpath(section[4])
+        else:
+            destination_folder = config.UNZIPPED_FILES_FOLDER.joinpath(section[3])
         os.makedirs(destination_folder, exist_ok=True)
 
         # Output warning if archive format is unsupported
@@ -59,6 +63,7 @@ def unzip_files(force_refresh):
                 zipped_file.extract(file_info, os.path.join(destination_folder, (folder + '_' + file_info.filename.split('.')[0]).lower()))
 
 def grade_programs(force_refresh):
+
     if config.GRADING_OUTPUT_FOLDER.is_dir():
         print('Grading already complete', end='')
 
@@ -158,7 +163,7 @@ def run_program(current_grading_folder):
     num_tests = 0
     num_tests_passed = 0
 
-    print(f' | Test : ', end='')
+    # print(f' | Test : ', end='')
     name = current_grading_folder.as_posix().split('/')[-1].lower()
     name = name.split('_')[-2] + '_' + name.split('_')[-1]
     try:
@@ -172,6 +177,7 @@ def run_program(current_grading_folder):
                     output = process.stdout.decode('utf-8')
                 except:
                     output = process.stdout.decode('cp949')
+                    break
             output = output[output.find('\n') + 1:]
             with open(foutput, 'r') as foutput:
                 expected = foutput.read()
@@ -182,48 +188,22 @@ def run_program(current_grading_folder):
             if expected in output:
                 num_tests_passed += 1
                 continue
+
+            # remove all whitespace and newlines from output and expected
+            expected = expected.replace(' ', '').replace('\t', '').replace('\r', '').replace('\n', '')
+            output = output.replace(' ', '').replace('\t', '').replace('\r', '').replace('\n', '')
+            if expected in output:
+                num_tests_passed += 1
+                continue
+            else:
+                prob = SequenceMatcher(None, output, expected).ratio()
+                # print(prob, end=' ')
+                if prob > 0.85:
+                    num_tests_passed += 1
+                    continue
         remove_points(current_grading_folder, score=math.floor(num_tests_passed/num_tests), reason='Passed test ')
     except:
-        remove_points(current_grading_folder, score=1.0, reason='No test input ')
-        print('No test input', end='')
-
-    print(f' {num_tests_passed}/{num_tests}', end='')
-                
-
-    # # Run program with Makefile and save output
-    # process = subprocess.run(['make', 'run'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=current_grading_folder)
-    # # process.communicate(input=open(config.MASTER_FILES_FOLDER / 'input.txt', 'rb').read())
-    # with open(current_grading_folder / 'program_output.txt', 'wb') as file:
-    #     file.write(process.stdout)
-
-    # # Check if program crashed
-    # program_crashed = process.returncode != 0
-    # print(f' | Crashed: {program_crashed}', end='')
-
-    # if program_crashed:
-    #     print()
-    #     remove_points(current_grading_folder, config.PENALTY_FOR_CRASH, 'Programme crash')
-    #     current_grading_folder.replace(config.GRADING_CRASHED_SUBFOLDER / current_grading_folder.name)
-    #     return False
-
-    # # Parse automated test results
-    # try:
-    #     output = process.stdout.decode('utf-8')
-    # except:
-    #     output = process.stdout.decode('cp949')
-
-    # tests_result = float(match.group(1)) if match else '?'
-
-    # if tests_result != '?':
-    #     lost_test_points = - (config.POINTS_FOR_TESTS - tests_result)
-    #     should_remove_points = lost_test_points < 0
-    # else:
-    #     lost_test_points = '-?'
-    #     should_remove_points = True
-
-    # if should_remove_points:
-    #     remove_points(current_grading_folder, lost_test_points, f'Échec de certains tests ({tests_result}/{config.POINTS_FOR_TESTS})')
-    # print(f' | Tests: {tests_result}/{config.POINTS_FOR_TESTS}', end='')
+        remove_points(current_grading_folder, score=1, reason='No test input ')
     return True
 
 
@@ -258,23 +238,23 @@ def check_program_for_leaks(current_grading_folder):
                 break
         print(f' | Leaks: {leaks_found}', end='')
         if leaks_found:
-            remove_points(current_grading_folder, config.PENALTY_FOR_LEAKS, 'Fuite de mémoire')
+            remove_points(current_grading_folder, 0, 'Memory leaks')
     except:
         print('| Leaks: No test input', end='')
 
     # Run valgrind against program and save output
     
-    
-
-
 def remove_points(current_grading_folder, score, reason):
-    _Q = current_grading_folder._parts[-1]
-    S_id = _Q.split('_')[0]
-    lab_id = _Q.split('_')[1]
-    question_id = _Q.split('_')[2]
-    print(f' | {S_id} | {lab_id} | {question_id}, {score}, {reason}', end='')
+    try:
+        _Q = current_grading_folder._parts[-1]
+        S_id = _Q.split('_')[0]
+        lab_id = _Q.split('_')[1]
+        question_id = _Q.split('_')[2]
 
-
+        print(f' | {S_id} | {lab_id} | {question_id}, {score}, {reason}', end='')
+    except:
+        pass
+    
 
 def get_executable_path(current_grading_folder):
     # Parse executable folder from Makefile printvars target

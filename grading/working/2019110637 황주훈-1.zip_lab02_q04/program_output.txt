@@ -1,0 +1,3 @@
+Starting program: bin/linux/debug/program
+x : y : x : 50
+y : 30

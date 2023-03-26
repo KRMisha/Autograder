@@ -1,0 +1,14 @@
+==1580== Memcheck, a memory error detector
+==1580== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==1580== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==1580== Command: ./program
+==1580== 
+==1580== 
+==1580== HEAP SUMMARY:
+==1580==     in use at exit: 0 bytes in 0 blocks
+==1580==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==1580== 
+==1580== All heap blocks were freed -- no leaks are possible
+==1580== 
+==1580== For lists of detected and suppressed errors, rerun with: -s
+==1580== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

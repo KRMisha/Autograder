@@ -1,0 +1,2 @@
+Compiling: src/LAB4.cpp
+Building executable: bin/linux/debug/program

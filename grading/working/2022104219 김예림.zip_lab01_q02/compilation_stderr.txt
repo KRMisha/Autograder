@@ -1,0 +1,13 @@
+src/Lab01_q02.cpp: In function ‘int main()’:
+src/Lab01_q02.cpp:7:24: warning: unused variable ‘siX’ [-Wunused-variable]
+    7 |         unsigned short siX;
+      |                        ^~~
+src/Lab01_q02.cpp:8:18: warning: unused variable ‘iX’ [-Wunused-variable]
+    8 |         unsigned iX;
+      |                  ^~
+src/Lab01_q02.cpp:9:14: warning: unused variable ‘liX’ [-Wunused-variable]
+    9 |         long liX;
+      |              ^~~
+src/Lab01_q02.cpp:10:19: warning: unused variable ‘lliX’ [-Wunused-variable]
+   10 |         long long lliX;
+      |                   ^~~~

@@ -1,0 +1,14 @@
+==8341== Memcheck, a memory error detector
+==8341== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==8341== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==8341== Command: ./program
+==8341== 
+==8341== 
+==8341== HEAP SUMMARY:
+==8341==     in use at exit: 0 bytes in 0 blocks
+==8341==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==8341== 
+==8341== All heap blocks were freed -- no leaks are possible
+==8341== 
+==8341== For lists of detected and suppressed errors, rerun with: -s
+==8341== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

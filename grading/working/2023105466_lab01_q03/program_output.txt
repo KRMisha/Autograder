@@ -1,0 +1,6 @@
+Starting program: bin/linux/debug/program
+(7 == 5):0
+(7 >= 5):1
+(7 != 5):1
+(7 <= 5):0
+(7 >= 5 ? 100 : -100): 100

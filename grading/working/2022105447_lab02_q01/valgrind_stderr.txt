@@ -1,0 +1,14 @@
+==11562== Memcheck, a memory error detector
+==11562== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==11562== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==11562== Command: ./program
+==11562== 
+==11562== 
+==11562== HEAP SUMMARY:
+==11562==     in use at exit: 0 bytes in 0 blocks
+==11562==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==11562== 
+==11562== All heap blocks were freed -- no leaks are possible
+==11562== 
+==11562== For lists of detected and suppressed errors, rerun with: -s
+==11562== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

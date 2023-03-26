@@ -1,0 +1,14 @@
+==7394== Memcheck, a memory error detector
+==7394== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==7394== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==7394== Command: ./program
+==7394== 
+==7394== 
+==7394== HEAP SUMMARY:
+==7394==     in use at exit: 0 bytes in 0 blocks
+==7394==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==7394== 
+==7394== All heap blocks were freed -- no leaks are possible
+==7394== 
+==7394== For lists of detected and suppressed errors, rerun with: -s
+==7394== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

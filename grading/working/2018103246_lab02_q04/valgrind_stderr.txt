@@ -1,0 +1,14 @@
+==4560== Memcheck, a memory error detector
+==4560== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==4560== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==4560== Command: ./program
+==4560== 
+==4560== 
+==4560== HEAP SUMMARY:
+==4560==     in use at exit: 0 bytes in 0 blocks
+==4560==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==4560== 
+==4560== All heap blocks were freed -- no leaks are possible
+==4560== 
+==4560== For lists of detected and suppressed errors, rerun with: -s
+==4560== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -1,0 +1,14 @@
+==5616== Memcheck, a memory error detector
+==5616== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5616== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==5616== Command: ./program
+==5616== 
+==5616== 
+==5616== HEAP SUMMARY:
+==5616==     in use at exit: 0 bytes in 0 blocks
+==5616==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==5616== 
+==5616== All heap blocks were freed -- no leaks are possible
+==5616== 
+==5616== For lists of detected and suppressed errors, rerun with: -s
+==5616== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

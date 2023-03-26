@@ -1,0 +1,4 @@
+Starting program: bin/linux/debug/program
+3.14159
+A
+a

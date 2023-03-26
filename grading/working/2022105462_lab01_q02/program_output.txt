@@ -1,0 +1,5 @@
+Starting program: bin/linux/debug/program
+sizeof(siX):2
+sizeof(iX):4
+sizeof(liX):8
+sizeof(lliX):8

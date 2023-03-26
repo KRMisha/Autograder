@@ -1,0 +1,4 @@
+src/lab02_q05.cpp: In function ‘int main()’:
+src/lab02_q05.cpp:5:16: warning: unused variable ‘C’ [-Wunused-variable]
+    5 |         int F, C;
+      |                ^

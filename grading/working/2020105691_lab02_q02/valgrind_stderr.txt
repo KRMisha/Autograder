@@ -1,0 +1,14 @@
+==19839== Memcheck, a memory error detector
+==19839== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==19839== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==19839== Command: ./program
+==19839== 
+==19839== 
+==19839== HEAP SUMMARY:
+==19839==     in use at exit: 0 bytes in 0 blocks
+==19839==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==19839== 
+==19839== All heap blocks were freed -- no leaks are possible
+==19839== 
+==19839== For lists of detected and suppressed errors, rerun with: -s
+==19839== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

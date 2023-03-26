@@ -1,0 +1,2 @@
+Compiling: src/3.cpp
+Building executable: bin/linux/debug/program

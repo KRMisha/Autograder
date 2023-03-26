@@ -1,0 +1,26 @@
+src/lab01_q02.cpp: In function â€˜int main()â€™:
+src/lab01_q02.cpp:8:44: error: expected primary-expression before â€˜<<â€™ token
+    8 |         cout << "sizeof(siX):" << /*±¸Çö*/ << endl;
+      |                                            ^~
+src/lab01_q02.cpp:9:43: error: expected primary-expression before â€˜<<â€™ token
+    9 |         cout << "sizeof(iX):" << /*±¸Çö*/ << endl;
+      |                                           ^~
+src/lab01_q02.cpp:10:44: error: expected primary-expression before â€˜<<â€™ token
+   10 |         cout << "sizeof(liX):" << /*±¸Çö*/ << endl;
+      |                                            ^~
+src/lab01_q02.cpp:11:45: error: expected primary-expression before â€˜<<â€™ token
+   11 |         cout << "sizeof(lliX):" << /*±¸Çö*/ << endl;
+      |                                             ^~
+src/lab01_q02.cpp:4:24: warning: unused variable â€˜siXâ€™ [-Wunused-variable]
+    4 |         unsigned short siX; // (int) »ý·« °¡´É
+      |                        ^~~
+src/lab01_q02.cpp:5:18: warning: unused variable â€˜iXâ€™ [-Wunused-variable]
+    5 |         unsigned iX;
+      |                  ^~
+src/lab01_q02.cpp:6:14: warning: unused variable â€˜liXâ€™ [-Wunused-variable]
+    6 |         long liX;
+      |              ^~~
+src/lab01_q02.cpp:7:19: warning: unused variable â€˜lliXâ€™ [-Wunused-variable]
+    7 |         long long lliX;
+      |                   ^~~~
+make: *** [Makefile:158: build/linux/debug/lab01_q02.o] Error 1

@@ -1,0 +1,5 @@
+Starting program: bin/linux/debug/program
+12	14
+x + y = 19
+x * y = 168
+x / y = 0.857143

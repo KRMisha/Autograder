@@ -1,0 +1,10 @@
+src/Lab#01_2022103791LeeJuAn.cpp: In function ‘int function2()’:
+src/Lab#01_2022103791LeeJuAn.cpp:14:18: warning: unused variable ‘iX’ [-Wunused-variable]
+   14 |         unsigned iX;
+      |                  ^~
+src/Lab#01_2022103791LeeJuAn.cpp:15:14: warning: unused variable ‘IiX’ [-Wunused-variable]
+   15 |         long IiX;
+      |              ^~~
+src/Lab#01_2022103791LeeJuAn.cpp:16:19: warning: unused variable ‘IIiX’ [-Wunused-variable]
+   16 |         long long IIiX;
+      |                   ^~~~

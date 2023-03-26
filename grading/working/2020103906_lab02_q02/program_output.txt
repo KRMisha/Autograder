@@ -1,11 +1,6 @@
 Starting program: bin/linux/debug/program
-A의 값을 입력하시오: B의 값을 입력하시오: 
-1)A+B= 8
-
-2)A-B= 4
-
-3)A*B= 12
-
-4)A/B= 3
-
-4)A%B= 0
+Please enter two integer values: 6 + 2 = 8
+6 - 2 = 4
+6 * 2 = 12
+6 / 2 = 3
+6 % 2 = 2

@@ -1,0 +1,16 @@
+src/lab01_q01.cpp: In function ‘int main()’:
+src/lab01_q01.cpp:19:5: error: ‘cout’ was not declared in this scope
+   19 |     cout<< x << endl;
+      |     ^~~~
+src/lab01_q01.cpp:10:1: note: ‘std::cout’ is defined in header ‘<iostream>’; did you forget to ‘#include <iostream>’?
+    9 | #include <stdio.h>
+  +++ |+#include <iostream>
+   10 | 
+src/lab01_q01.cpp:19:17: error: ‘endl’ was not declared in this scope
+   19 |     cout<< x << endl;
+      |                 ^~~~
+src/lab01_q01.cpp:10:1: note: ‘std::endl’ is defined in header ‘<ostream>’; did you forget to ‘#include <ostream>’?
+    9 | #include <stdio.h>
+  +++ |+#include <ostream>
+   10 | 
+make: *** [Makefile:158: build/linux/debug/lab01_q01.o] Error 1

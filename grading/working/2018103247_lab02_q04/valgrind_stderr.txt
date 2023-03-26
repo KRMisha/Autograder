@@ -1,0 +1,14 @@
+==28676== Memcheck, a memory error detector
+==28676== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==28676== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==28676== Command: ./program
+==28676== 
+==28676== 
+==28676== HEAP SUMMARY:
+==28676==     in use at exit: 0 bytes in 0 blocks
+==28676==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==28676== 
+==28676== All heap blocks were freed -- no leaks are possible
+==28676== 
+==28676== For lists of detected and suppressed errors, rerun with: -s
+==28676== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

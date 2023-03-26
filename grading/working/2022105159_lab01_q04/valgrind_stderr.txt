@@ -1,0 +1,14 @@
+==9936== Memcheck, a memory error detector
+==9936== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==9936== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==9936== Command: ./program
+==9936== 
+==9936== 
+==9936== HEAP SUMMARY:
+==9936==     in use at exit: 0 bytes in 0 blocks
+==9936==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==9936== 
+==9936== All heap blocks were freed -- no leaks are possible
+==9936== 
+==9936== For lists of detected and suppressed errors, rerun with: -s
+==9936== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

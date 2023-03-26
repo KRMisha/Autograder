@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/Library/Developer/CommandLineTools/usr/bin"
+            ],
+            "defines": [],
+            "macFrameworkPath": [],
+            "intelliSenseMode": "macos-clang-x64"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,20 @@
+src/lab02_q02.cpp: In function ‘int main()’:
+src/lab02_q02.cpp:6:22: error: expected ‘,’ or ‘;’ before ‘d’
+    6 |         int a=6, b=2 d=8, e=4, f=12, g=3, h=0;
+      |                      ^
+src/lab02_q02.cpp:10:9: error: ‘d’ was not declared in this scope
+   10 |         d = a + b;
+      |         ^
+src/lab02_q02.cpp:11:9: error: ‘e’ was not declared in this scope
+   11 |         e = a - b;
+      |         ^
+src/lab02_q02.cpp:12:9: error: ‘f’ was not declared in this scope
+   12 |         f = a * b;
+      |         ^
+src/lab02_q02.cpp:13:9: error: ‘g’ was not declared in this scope
+   13 |         g = a / b;
+      |         ^
+src/lab02_q02.cpp:14:9: error: ‘h’ was not declared in this scope
+   14 |         h = a % b;
+      |         ^
+make: *** [Makefile:158: build/linux/debug/lab02_q02.o] Error 1

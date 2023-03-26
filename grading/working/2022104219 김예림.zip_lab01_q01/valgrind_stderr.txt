@@ -1,0 +1,14 @@
+==30465== Memcheck, a memory error detector
+==30465== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==30465== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==30465== Command: ./program
+==30465== 
+==30465== 
+==30465== HEAP SUMMARY:
+==30465==     in use at exit: 0 bytes in 0 blocks
+==30465==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==30465== 
+==30465== All heap blocks were freed -- no leaks are possible
+==30465== 
+==30465== For lists of detected and suppressed errors, rerun with: -s
+==30465== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -1,0 +1,4 @@
+Starting program: bin/linux/debug/program
+Write two integers A and B 
+A: B: A = 50
+B = 30

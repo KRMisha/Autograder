@@ -1,0 +1,1 @@
+Building executable: bin/linux/debug/program

@@ -1,0 +1,4 @@
+src/lab01_q04.cpp: In function ‘int main()’:
+src/lab01_q04.cpp:6:24: warning: statement has no effect [-Wunused-value]
+    6 |         char ch1 = 65; 'A';
+      |                        ^~~

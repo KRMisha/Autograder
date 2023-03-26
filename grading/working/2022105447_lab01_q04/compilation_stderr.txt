@@ -1,0 +1,8 @@
+src/lab01_q04.cpp: In function ‘int main()’:
+src/lab01_q04.cpp:6:20: warning: unnecessary parentheses in declaration of ‘PI’ [-Wparentheses]
+    6 |         const float(PI)=3.14;
+      |                    ^~~~
+src/lab01_q04.cpp:6:20: note: remove parentheses
+    6 |         const float(PI)=3.14;
+      |                    ^~~~
+      |                    -  -

@@ -1,0 +1,14 @@
+==9520== Memcheck, a memory error detector
+==9520== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==9520== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==9520== Command: ./program
+==9520== 
+==9520== 
+==9520== HEAP SUMMARY:
+==9520==     in use at exit: 0 bytes in 0 blocks
+==9520==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==9520== 
+==9520== All heap blocks were freed -- no leaks are possible
+==9520== 
+==9520== For lists of detected and suppressed errors, rerun with: -s
+==9520== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

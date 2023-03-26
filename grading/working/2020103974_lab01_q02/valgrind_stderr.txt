@@ -1,0 +1,14 @@
+==2421== Memcheck, a memory error detector
+==2421== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==2421== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==2421== Command: ./program
+==2421== 
+==2421== 
+==2421== HEAP SUMMARY:
+==2421==     in use at exit: 0 bytes in 0 blocks
+==2421==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==2421== 
+==2421== All heap blocks were freed -- no leaks are possible
+==2421== 
+==2421== For lists of detected and suppressed errors, rerun with: -s
+==2421== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

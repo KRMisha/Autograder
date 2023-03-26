@@ -1,0 +1,14 @@
+==12077== Memcheck, a memory error detector
+==12077== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==12077== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==12077== Command: ./program
+==12077== 
+==12077== 
+==12077== HEAP SUMMARY:
+==12077==     in use at exit: 0 bytes in 0 blocks
+==12077==   total heap usage: 2 allocs, 2 frees, 76,800 bytes allocated
+==12077== 
+==12077== All heap blocks were freed -- no leaks are possible
+==12077== 
+==12077== For lists of detected and suppressed errors, rerun with: -s
+==12077== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

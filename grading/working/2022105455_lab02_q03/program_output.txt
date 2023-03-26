@@ -1,0 +1,8 @@
+Starting program: bin/linux/debug/program
+4
+4
+1
+-3
+8
+4
+-0.5

@@ -1,0 +1,4 @@
+Starting program: bin/linux/debug/program
+Please enter two integer values: 
+A : B : values of A is : 50
+values of B is : 30

@@ -1,0 +1,2 @@
+Starting program: bin/linux/debug/program
+Please enter Fahrenheit value: Delsius value is 0

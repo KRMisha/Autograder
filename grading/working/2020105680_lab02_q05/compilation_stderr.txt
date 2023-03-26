@@ -1,0 +1,4 @@
+src/lab02_q05.cpp: In function ‘int main()’:
+src/lab02_q05.cpp:7:16: warning: unused variable ‘value’ [-Wunused-variable]
+    7 |         double value;
+      |                ^~~~~

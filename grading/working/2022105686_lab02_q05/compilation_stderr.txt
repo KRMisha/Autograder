@@ -1,0 +1,4 @@
+src/lab02_q05.cpp: In function ‘int main()’:
+src/lab02_q05.cpp:5:27: warning: unused variable ‘Celsius’ [-Wunused-variable]
+    5 |         float Fahrenheit, Celsius;
+      |                           ^~~~~~~

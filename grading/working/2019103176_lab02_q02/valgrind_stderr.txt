@@ -1,0 +1,14 @@
+==19631== Memcheck, a memory error detector
+==19631== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==19631== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==19631== Command: ./program
+==19631== 
+==19631== 
+==19631== HEAP SUMMARY:
+==19631==     in use at exit: 0 bytes in 0 blocks
+==19631==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==19631== 
+==19631== All heap blocks were freed -- no leaks are possible
+==19631== 
+==19631== For lists of detected and suppressed errors, rerun with: -s
+==19631== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

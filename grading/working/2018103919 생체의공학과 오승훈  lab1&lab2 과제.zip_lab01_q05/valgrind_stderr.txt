@@ -1,0 +1,14 @@
+==10135== Memcheck, a memory error detector
+==10135== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==10135== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==10135== Command: ./program
+==10135== 
+==10135== 
+==10135== HEAP SUMMARY:
+==10135==     in use at exit: 0 bytes in 0 blocks
+==10135==   total heap usage: 3 allocs, 3 frees, 80,896 bytes allocated
+==10135== 
+==10135== All heap blocks were freed -- no leaks are possible
+==10135== 
+==10135== For lists of detected and suppressed errors, rerun with: -s
+==10135== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

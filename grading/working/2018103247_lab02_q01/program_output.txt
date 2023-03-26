@@ -1,0 +1,2 @@
+Starting program: bin/linux/debug/program
+My Name is 안범수
