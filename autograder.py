@@ -2,6 +2,7 @@
 
 import glob
 import os
+import math
 import re
 import shutil
 import subprocess
@@ -80,7 +81,7 @@ def grade_programs(force_refresh):
     for index, current_unzipped_folder in enumerate(unzipped_folders, 1):
         for i, worker in enumerate(current_unzipped_folder.iterdir()):
             print(f'\t{index}/{len(unzipped_folders)}: {current_unzipped_folder.name}', end='')
-
+            
             current_grading_folder = prepare_grading_folder(worker)
 
             if not compile_program(current_grading_folder):
@@ -136,14 +137,15 @@ def compile_program(current_grading_folder):
 
     if compilation_failed:
         print()
-        remove_points(current_grading_folder, config.PENALTY_FOR_COMPILATION_FAILURE, 'Ne compile pas')
+        remove_points(current_grading_folder, score=0.0, reason='Compilation failed')
         current_grading_folder.replace(config.GRADING_COMPILATION_FAILED_SUBFOLDER / current_grading_folder.name)
         return False
 
     # Check for warnings
     warnings_emitted = len(process.stderr) > 0
     if warnings_emitted:
-        remove_points(current_grading_folder, config.PENALTY_FOR_WARNINGS, 'Warnings')
+        pass
+        # remove_points(current_grading_folder, config.PENALTY_FOR_WARNINGS, 'Warnings')
     print(f' | Warnings: {warnings_emitted}', end='')
     return True
 
@@ -180,7 +182,9 @@ def run_program(current_grading_folder):
             if expected in output:
                 num_tests_passed += 1
                 continue
+        remove_points(current_grading_folder, score=math.floor(num_tests_passed/num_tests), reason='Passed test ')
     except:
+        remove_points(current_grading_folder, score=1.0, reason='No test input ')
         print('No test input', end='')
 
     print(f' {num_tests_passed}/{num_tests}', end='')
@@ -263,9 +267,13 @@ def check_program_for_leaks(current_grading_folder):
     
 
 
-def remove_points(current_grading_folder, points_to_remove, reason):
-    with open(current_grading_folder / config.POINTS_TO_REMOVE_FILENAME, 'a') as file:
-        file.write(f'{points_to_remove}: {reason}\n')
+def remove_points(current_grading_folder, score, reason):
+    _Q = current_grading_folder._parts[-1]
+    S_id = _Q.split('_')[0]
+    lab_id = _Q.split('_')[1]
+    question_id = _Q.split('_')[2]
+    print(f' | {S_id} | {lab_id} | {question_id}, {score}, {reason}', end='')
+
 
 
 def get_executable_path(current_grading_folder):
