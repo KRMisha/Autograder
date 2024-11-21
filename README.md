@@ -35,7 +35,7 @@ Example:
     cd Autograder
     ```
 
-3. Install the required packages
+2. Install the required packages:
     - With a venv (recommended):
 
         ```sh
@@ -57,7 +57,8 @@ Example:
     > The `zipped` directory should contain a list of folders each named with the submission's team name. Inside each of these team folders should be the respective team's turned in work as a zip archive. The name of the zip archive does not need to follow a specific convention.
 
     For example:
-    ```
+
+    ```text
     zipped
     ├── S1_G4
     │   └── finalversion.zip
@@ -90,7 +91,7 @@ Example:
 
 4. Edit the `config.py` file according to your needs:
     - Edit the "Grading settings" section to change the penalties associated with certain errors.
-    - Change the `MOSS_USER_ID` variable to your Moss ID ([see the Moss instructions to learn how to obtain a Moss ID](https://theory.stanford.edu/~aiken/moss/))
+    - Change the `MOSS_USER_ID` variable to your Moss ID (see [the Moss instructions](https://theory.stanford.edu/~aiken/moss/) to learn how to obtain a Moss ID).
     - Change `SMTP_SERVER` and `SMTP_PORT` to your email server's settings.
     - Change `SENDER_EMAIL` to the email address from which you will send the grades.
     - Change `EMAIL_SUBJECT` and `EMAIL_CONTENT` with the desired information.
@@ -106,12 +107,13 @@ Unzip and autograde all submissions in a single step:
 ```
 
 This will first unzip all the zipped submissions into a new `unzipped` directory. Then, the following will be done for each submission:
-- Copy the unzipped files and master files to a team folder inside the `grading` directory
-- Compile the program
-- Output any compilation errors and warnings to `make_stderr.txt` (depending on the warning options set in the Makefile)
-- Run the program and save its output to `program_output.txt` (with both stdout and stderr)
-- Parse the test results from the program output
-- Output any memory leaks detected with Valgrind to `valgrind_stderr.txt`
+
+- Copy the unzipped files and master files to a team folder inside the `grading` directory.
+- Compile the program.
+- Output any compilation errors and warnings to `make_stderr.txt` (depending on the warning options set in the Makefile).
+- Run the program and save its output to `program_output.txt` (with both stdout and stderr).
+- Parse the test results from the program output.
+- Output any memory leaks detected with Valgrind to `valgrind_stderr.txt`.
 - Create a `points_to_rm.txt` file. This file will contain the breakdown of points which have automatically been subtracted for compilation errors, warnings, crashes, leaks, or failed unit tests.
 
 The team folders will be placed in either of the `compilation_failed`, `crashed` or `working` subdirectories of the `grading` folder depending on their state.
@@ -128,7 +130,7 @@ Once each submission has been autograded and the `points_to_rm.txt` file has bee
 
 To do so, simply open each submission in the `grading` directory. To remove points with feedback, add a line to the team's `points_to_rm.txt` file with the following format, where the `#` represents any decimal number:
 
-```
+```text
 -#: Explanation for penalty
 ```
 
@@ -143,6 +145,7 @@ To calculate students' grades based on the feedback in each `points_to_rm.txt` f
 ```
 
 This will create two CSV files in the `grades` directory. They both contain the same information but present it differently:
+
 - `individual_grades.csv`: all the grades with feedback, one line per student
 - `team_grades.csv`: all the grades with feedback, one line per team
 
@@ -172,7 +175,7 @@ After you provide your email login credentials at the prompt, an email will be s
 
 ## Folder hierarchy overview
 
-```
+```text
 .
 ├── grades
 │   ├── individual_grades.csv               # Final grades for each student
