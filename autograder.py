@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import glob
 import os
 import re
 import shutil
@@ -192,7 +191,7 @@ def check_program_for_leaks(current_grading_folder):
                                  capture_output=True, cwd=executable_path.parent, timeout=60)
     except subprocess.TimeoutExpired:
         # Timeout when Valgrind takes too long (give up on detecting leaks)
-        print(f' | Leaks: Timed out', end='')
+        print(' | Leaks: Timed out', end='')
         return
 
     with open(current_grading_folder / 'valgrind_stderr.txt', 'wb') as file:
