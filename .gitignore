@@ -1,4 +1,8 @@
+# Virtual environment
 .venv/
-.vscode/
 
+# Compiled bytecode
 __pycache__/
+
+# VS Code
+.vscode/
